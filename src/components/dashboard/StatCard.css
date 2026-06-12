@@ -1,0 +1,17 @@
+.stat-card {
+  background: white;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+}
+
+.stat-card h3 {
+  font-size: 2rem;
+  margin-bottom: 8px;
+  color: #081128;
+}
+
+.stat-card p {
+  color: #666;
+  font-size: 1rem;
+}

@@ -1,0 +1,31 @@
+.repairs-page {
+    padding: 40px;
+}
+
+.new-repair-btn {
+    background: #3366e8;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    margin: 20px 0;
+}
+
+.repairs-table {
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.repair-row {
+    display: grid;
+    grid-template-columns: repeat(4,1fr);
+    padding: 18px;
+    border-bottom: 1px solid #eee;
+}
+
+.header {
+    font-weight: bold;
+    background: #f5f5f5;
+}

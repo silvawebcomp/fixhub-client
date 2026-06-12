@@ -1,0 +1,21 @@
+@media (max-width:768px){
+
+    nav{
+
+        flex-direction:column;
+
+        gap:24px;
+
+    }
+
+    nav ul{
+
+        flex-wrap:wrap;
+
+        justify-content:center;
+
+        gap:20px;
+
+    }
+
+}

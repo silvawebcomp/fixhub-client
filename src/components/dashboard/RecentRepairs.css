@@ -1,0 +1,33 @@
+.recent-repairs{
+    background:white;
+    padding:25px;
+    border-radius:15px;
+    margin-top:30px;
+}
+
+.recent-repairs h2{
+    margin-bottom:20px;
+}
+
+.repair-item{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+
+    padding:15px 0;
+
+    border-bottom:1px solid #e5e7eb;
+}
+
+.repair-item:last-child{
+    border-bottom:none;
+}
+
+.repair-item h3{
+    font-size:16px;
+}
+
+.repair-item span{
+    color:#2563eb;
+    font-weight:600;
+}
