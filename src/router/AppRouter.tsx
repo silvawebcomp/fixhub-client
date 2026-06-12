@@ -10,19 +10,20 @@ import FAQ from "../components/ui/FAQ";
 import Login from "../pages/auth/Login";
 import Register from "../pages/auth/Register";
 import Dashboard from "../pages/dashboard/Dashboard";
-import NewRepair from "../pages/repairs/NewRepair";   // <-- NEW IMPORT
+import NewRepair from "../pages/repairs/NewRepair";
+import Customers from "../pages/customers/Customers";
 
 function LandingPage() {
-  return (
-    <>
-      <Hero />
-      <Features />
-      <Stats />
-      <Testimonials />
-      <Pricing />
-      <FAQ />
-    </>
-  );
+    return (
+        <>
+            <Hero />
+            <Features />
+            <Stats />
+            <Testimonials />
+            <Pricing />
+            <FAQ />
+        </>
+    );
 }
 
 function AppRouter() {
@@ -54,6 +55,11 @@ function AppRouter() {
                 <Route
                     path="/repairs/new"
                     element={<NewRepair />}
+                />
+
+                <Route
+                    path="/customers"
+                    element={<Customers />}
                 />
 
             </Routes>

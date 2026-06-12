@@ -1,0 +1,64 @@
+.customers-page {
+    padding: 40px;
+}
+
+.customers-header {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    margin-bottom: 30px;
+}
+
+.add-customer-btn {
+
+    background: #3366e8;
+
+    color: white;
+
+    border: none;
+
+    padding: 12px 20px;
+
+    border-radius: 8px;
+
+    cursor: pointer;
+}
+
+.customers-search {
+
+    margin-bottom: 30px;
+}
+
+.customers-search input {
+
+    width: 100%;
+
+    max-width: 400px;
+
+    padding: 12px;
+
+    border: 1px solid #ddd;
+
+    border-radius: 8px;
+}
+
+.customers-table table {
+
+    width: 100%;
+
+    border-collapse: collapse;
+}
+
+.customers-table th,
+.customers-table td {
+
+    padding: 15px;
+
+    border-bottom: 1px solid #eee;
+
+    text-align: left;
+}
