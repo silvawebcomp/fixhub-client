@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-
+import Repairs from "../pages/repairs/Repairs";
 import Hero from "../pages/landing/Hero";
 import Features from "../components/ui/Features";
 import Stats from "../components/ui/Stats";
@@ -56,7 +56,10 @@ function AppRouter() {
                     path="/repairs/new"
                     element={<NewRepair />}
                 />
-
+                <Route
+                    path="/repairs"
+                     element={<Repairs />}
+                />
                 <Route
                     path="/customers"
                     element={<Customers />}

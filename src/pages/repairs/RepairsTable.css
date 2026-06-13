@@ -1,0 +1,54 @@
+.repairs-table {
+
+    background: white;
+
+    border-radius: 16px;
+
+    overflow: hidden;
+
+    box-shadow: 0 8px 24px rgba(15,23,42,0.08);
+
+}
+
+.repairs-table table {
+
+    width: 100%;
+
+    border-collapse: collapse;
+
+}
+
+.repairs-table th,
+.repairs-table td {
+
+    padding: 18px;
+
+    text-align: left;
+
+    border-bottom: 1px solid #e5e7eb;
+
+}
+
+.repairs-table th {
+
+    background: #f8fafc;
+
+    color: #475569;
+
+}
+
+.status {
+
+    background: #dbeafe;
+
+    color: #2563eb;
+
+    padding: 6px 12px;
+
+    border-radius: 999px;
+
+    font-size: 14px;
+
+    font-weight: 600;
+
+}
