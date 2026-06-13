@@ -12,7 +12,7 @@ import Register from "../pages/auth/Register";
 import Dashboard from "../pages/dashboard/Dashboard";
 import NewRepair from "../pages/repairs/NewRepair";
 import Customers from "../pages/customers/Customers";
-
+import Inventory from "../pages/inventory/Inventory";
 function LandingPage() {
     return (
         <>
@@ -61,7 +61,10 @@ function AppRouter() {
                     path="/customers"
                     element={<Customers />}
                 />
-
+                <Route
+                    path="/inventory"
+                    element={<Inventory />}
+                />
             </Routes>
 
         </BrowserRouter>

@@ -1,29 +1,73 @@
-.topbar{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
+.topbar {
 
-    margin-bottom:40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    margin-bottom: 32px;
+
 }
 
-.topbar h2{
-    color:#081128;
+.topbar h1 {
+
+    margin: 0;
+    font-size: 32px;
+
 }
 
-.topbar-user{
-    display:flex;
-    align-items:center;
-    gap:20px;
+.topbar p {
+
+    margin-top: 8px;
+    color: #6b7280;
+
 }
 
-.topbar-user button{
-    border:none;
-    background:white;
-    padding:10px 14px;
-    border-radius:10px;
-    cursor:pointer;
+.topbar-user {
+
+    display: flex;
+    align-items: center;
+    gap: 16px;
+
 }
 
-.topbar-user span{
-    font-weight:600;
+.notification-btn {
+
+    border: none;
+    background: white;
+
+    padding: 10px 14px;
+
+    border-radius: 10px;
+
+    cursor: pointer;
+
+    font-size: 18px;
+
+}
+
+.user-profile {
+
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+}
+
+.avatar {
+
+    width: 42px;
+    height: 42px;
+
+    border-radius: 50%;
+
+    background: #2563eb;
+
+    color: white;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    font-weight: bold;
+
 }

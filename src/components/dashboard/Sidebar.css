@@ -31,3 +31,13 @@
 .sidebar nav a:hover {
     background: #374151;
 }
+
+.sidebar nav a.active {
+
+    background: #2563eb;
+
+    color: white;
+
+    font-weight: 600;
+
+}

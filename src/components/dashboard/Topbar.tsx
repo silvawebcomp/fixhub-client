@@ -1,23 +1,39 @@
 import "./Topbar.css";
 
 function Topbar() {
-  return (
-    <header className="topbar">
+    return (
+        <header className="topbar">
 
-      <h2>Dashboard</h2>
+            <div>
 
-      <div className="topbar-user">
+                <h1>Welcome back, Sam 👋</h1>
 
-        <button>
-          🔔
-        </button>
+                <p>
+                    Manage repairs, customers and your business from one place.
+                </p>
 
-        <span>Sam</span>
+            </div>
 
-      </div>
+            <div className="topbar-user">
 
-    </header>
-  );
+                <button className="notification-btn">
+                    🔔
+                </button>
+
+                <div className="user-profile">
+
+                    <div className="avatar">
+                        S
+                    </div>
+
+                    <span>Sam</span>
+
+                </div>
+
+            </div>
+
+        </header>
+    );
 }
 
 export default Topbar;

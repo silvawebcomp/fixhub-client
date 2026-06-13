@@ -1,10 +1,13 @@
 import "./Dashboard.css";
 
-import DashboardLayout from "../../components/dashboard/DashboardLayout";
-import Topbar from "../../components/dashboard/Topbar";
+import DashboardLayout from "../../layouts/DashboardLayout";
+
 import StatCard from "../../components/dashboard/StatCard";
-import RecentRepairs from "../../components/dashboard/RecentRepairs";
 import QuickActions from "../../components/dashboard/QuickActions";
+import RecentRepairs from "../../components/dashboard/RecentRepairs";
+import Topbar from "../../components/dashboard/Topbar";
+
+import { dashboardStats } from "../../data/dashboard";
 
 function Dashboard() {
     return (
@@ -14,31 +17,21 @@ function Dashboard() {
 
             <div className="stats-grid">
 
-                <StatCard
-                    title="Active Repairs"
-                    value="128"
-                />
+                {dashboardStats.map((stat) => (
 
-                <StatCard
-                    title="Completed"
-                    value="96"
-                />
+                    <StatCard
+                        key={stat.id}
+                        title={stat.title}
+                        value={stat.value}
+                    />
 
-                <StatCard
-                    title="Customers"
-                    value="245"
-                />
-
-                <StatCard
-                    title="Revenue"
-                    value="$12.4K"
-                />
+                ))}
 
             </div>
 
-            <RecentRepairs />
-
             <QuickActions />
+
+            <RecentRepairs />
 
         </DashboardLayout>
     );
