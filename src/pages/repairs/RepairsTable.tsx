@@ -1,59 +1,197 @@
 import "./RepairsTable.css";
 
-import { repairs } from "../../data/repairs";
+import { useEffect, useState } from "react";
+
+import {
+    getRepairs,
+    deleteRepair,
+} from "../../services/repairService";
+
+import { useSearch } from "../../hooks/useSearch";
+
+import type { Repair } from "../../types/repair";
 
 function RepairsTable() {
 
+    const [repairs, setRepairs] = useState<Repair[]>([]);
+
+    const [loading, setLoading] = useState(true);
+
+    async function loadRepairs() {
+
+        try {
+
+            const data = await getRepairs();
+
+            setRepairs(data);
+
+        } catch (error) {
+
+            console.error(error);
+
+        } finally {
+
+            setLoading(false);
+
+        }
+
+    }
+
+    useEffect(() => {
+
+        loadRepairs();
+
+    }, []);
+
+    const {
+
+        query,
+
+        setQuery,
+
+        filteredData,
+
+    } = useSearch(
+
+        repairs,
+
+        (repair) =>
+
+            `${repair.customer} ${repair.device} ${repair.status}`
+
+    );
+
+    async function handleDelete(id: number) {
+
+        const confirmed = window.confirm(
+
+            "Delete this repair?"
+
+        );
+
+        if (!confirmed) {
+
+            return;
+
+        }
+
+        try {
+
+            await deleteRepair(id);
+
+            await loadRepairs();
+
+        } catch (error) {
+
+            console.error(error);
+
+        }
+
+    }
+
+    if (loading) {
+
+        return <p>Loading repairs...</p>;
+
+    }
+
     return (
 
-        <section className="repairs-table">
+        <>
 
-            <table>
+            <input
 
-                <thead>
+                className="search-input"
 
-                    <tr>
+                type="text"
 
-                        <th>Customer</th>
-                        <th>Device</th>
-                        <th>Status</th>
-                        <th>Date</th>
+                placeholder="Search repairs..."
 
-                    </tr>
+                value={query}
 
-                </thead>
+                onChange={(event) =>
 
-                <tbody>
+                    setQuery(event.target.value)
 
-                    {repairs.map((repair) => (
+                }
 
-                        <tr key={repair.id}>
+            />
 
-                            <td>{repair.customer}</td>
+            <section className="repairs-table">
 
-                            <td>{repair.device}</td>
+                <table>
 
-                            <td>
+                    <thead>
 
-                                <span className="status">
+                        <tr>
 
-                                    {repair.status}
+                            <th>Customer</th>
 
-                                </span>
+                            <th>Device</th>
 
-                            </td>
+                            <th>Status</th>
 
-                            <td>{repair.date}</td>
+                            <th>Date</th>
+
+                            <th>Action</th>
 
                         </tr>
 
-                    ))}
+                    </thead>
 
-                </tbody>
+                    <tbody>
 
-            </table>
+                        {filteredData.map((repair) => (
 
-        </section>
+                            <tr key={repair.id}>
+
+                                <td>{repair.customer}</td>
+
+                                <td>{repair.device}</td>
+
+                                <td>
+
+                                    <span className="status">
+
+                                        {repair.status}
+
+                                    </span>
+
+                                </td>
+
+                                <td>{repair.date}</td>
+
+                                <td>
+
+                                    <button
+
+                                        className="delete-btn"
+
+                                        onClick={() =>
+
+                                            handleDelete(repair.id)
+
+                                        }
+
+                                    >
+
+                                        Delete
+
+                                    </button>
+
+                                </td>
+
+                            </tr>
+
+                        ))}
+
+                    </tbody>
+
+                </table>
+
+            </section>
+
+        </>
 
     );
 

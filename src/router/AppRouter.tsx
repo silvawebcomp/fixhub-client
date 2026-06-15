@@ -1,5 +1,13 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Repairs from "../pages/repairs/Repairs";
+import {
+
+    BrowserRouter,
+
+    Routes,
+
+    Route,
+
+} from "react-router-dom";
+
 import Hero from "../pages/landing/Hero";
 import Features from "../components/ui/Features";
 import Stats from "../components/ui/Stats";
@@ -9,69 +17,157 @@ import FAQ from "../components/ui/FAQ";
 
 import Login from "../pages/auth/Login";
 import Register from "../pages/auth/Register";
+
 import Dashboard from "../pages/dashboard/Dashboard";
+import Repairs from "../pages/repairs/Repairs";
 import NewRepair from "../pages/repairs/NewRepair";
 import Customers from "../pages/customers/Customers";
 import Inventory from "../pages/inventory/Inventory";
+
+import ProtectedRoute from "../components/auth/ProtectedRoute";
+
 function LandingPage() {
+
     return (
+
         <>
+
             <Hero />
+
             <Features />
+
             <Stats />
+
             <Testimonials />
+
             <Pricing />
+
             <FAQ />
+
         </>
+
     );
+
 }
 
 function AppRouter() {
+
     return (
+
         <BrowserRouter>
 
             <Routes>
 
                 <Route
+
                     path="/"
+
                     element={<LandingPage />}
+
                 />
 
                 <Route
+
                     path="/login"
+
                     element={<Login />}
+
                 />
 
                 <Route
+
                     path="/register"
+
                     element={<Register />}
+
                 />
 
                 <Route
+
                     path="/dashboard"
-                    element={<Dashboard />}
+
+                    element={
+
+                        <ProtectedRoute>
+
+                            <Dashboard />
+
+                        </ProtectedRoute>
+
+                    }
+
                 />
 
                 <Route
-                    path="/repairs/new"
-                    element={<NewRepair />}
-                />
-                <Route
+
                     path="/repairs"
-                     element={<Repairs />}
+
+                    element={
+
+                        <ProtectedRoute>
+
+                            <Repairs />
+
+                        </ProtectedRoute>
+
+                    }
+
                 />
+
                 <Route
+
+                    path="/repairs/new"
+
+                    element={
+
+                        <ProtectedRoute>
+
+                            <NewRepair />
+
+                        </ProtectedRoute>
+
+                    }
+
+                />
+
+                <Route
+
                     path="/customers"
-                    element={<Customers />}
+
+                    element={
+
+                        <ProtectedRoute>
+
+                            <Customers />
+
+                        </ProtectedRoute>
+
+                    }
+
                 />
+
                 <Route
+
                     path="/inventory"
-                    element={<Inventory />}
+
+                    element={
+
+                        <ProtectedRoute>
+
+                            <Inventory />
+
+                        </ProtectedRoute>
+
+                    }
+
                 />
+
             </Routes>
 
         </BrowserRouter>
+
     );
+
 }
 
 export default AppRouter;

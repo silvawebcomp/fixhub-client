@@ -1,0 +1,82 @@
+@media (max-width: 1024px) {
+
+    .dashboard-layout {
+
+        grid-template-columns: 220px 1fr;
+
+    }
+
+}
+
+@media (max-width: 768px) {
+
+    .dashboard-layout {
+
+        display: block;
+
+    }
+
+    .sidebar {
+
+        width: 100%;
+
+        height: auto;
+
+        position: relative;
+
+    }
+
+    .repairs-header,
+    .customers-header {
+
+        flex-direction: column;
+
+        gap: 16px;
+
+        align-items: stretch;
+
+    }
+
+    .new-repair-btn,
+    .add-customer-btn {
+
+        width: 100%;
+
+    }
+
+    .repairs-table,
+    .customers-table {
+
+        overflow-x: auto;
+
+    }
+
+    table {
+
+        min-width: 700px;
+
+    }
+
+}
+
+@media (max-width: 480px) {
+
+    h1 {
+
+        font-size: 2rem;
+
+    }
+
+    h2 {
+
+        font-size: 1.5rem;
+
+    }
+
+    main {
+
+        padding: 20px;
+
+    }
+
+}

@@ -6,6 +6,8 @@
 
     gap: 24px;
 
+    width: 100%;
+
 }
 
 .repairs-header {
@@ -16,6 +18,10 @@
 
     align-items: center;
 
+    flex-wrap: wrap;
+
+    gap: 16px;
+
 }
 
 .new-repair-btn {
@@ -24,13 +30,11 @@
 
     color: white;
 
-    border: none;
+    text-decoration: none;
 
-    padding: 12px 20px;
+    padding: 12px 18px;
 
     border-radius: 10px;
-
-    cursor: pointer;
 
     font-weight: 600;
 
@@ -41,5 +45,17 @@
 .new-repair-btn:hover {
 
     background: #1d4ed8;
+
+}
+
+@media (max-width:768px){
+
+    .repairs-header{
+
+        flex-direction:column;
+
+        align-items:flex-start;
+
+    }
 
 }

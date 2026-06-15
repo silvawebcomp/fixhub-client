@@ -1,7 +1,71 @@
 import "./Customers.css";
 
+import { useEffect, useState } from "react";
+
+import { getCustomers } from "../../services/customerService";
+
+import { useSearch } from "../../hooks/useSearch";
+
+import type { Customer } from "../../types/customer";
+
 function Customers() {
+
+    const [customers, setCustomers] = useState<Customer[]>([]);
+
+    const [loading, setLoading] = useState(true);
+
+    const {
+
+        query,
+
+        setQuery,
+
+        filteredData,
+
+    } = useSearch(
+
+        customers,
+
+        (customer) =>
+
+            `${customer.name} ${customer.phone} ${customer.device}`
+
+    );
+
+    useEffect(() => {
+
+        async function loadCustomers() {
+
+            try {
+
+                const data = await getCustomers();
+
+                setCustomers(data);
+
+            } catch (error) {
+
+                console.error(error);
+
+            } finally {
+
+                setLoading(false);
+
+            }
+
+        }
+
+        loadCustomers();
+
+    }, []);
+
+    if (loading) {
+
+        return <p>Loading customers...</p>;
+
+    }
+
     return (
+
         <main className="customers-page">
 
             <header className="customers-header">
@@ -9,7 +73,9 @@ function Customers() {
                 <h1>Customers</h1>
 
                 <button className="add-customer-btn">
+
                     + Add Customer
+
                 </button>
 
             </header>
@@ -17,8 +83,19 @@ function Customers() {
             <section className="customers-search">
 
                 <input
+
                     type="text"
+
                     placeholder="Search customers..."
+
+                    value={query}
+
+                    onChange={(event) =>
+
+                        setQuery(event.target.value)
+
+                    }
+
                 />
 
             </section>
@@ -32,9 +109,10 @@ function Customers() {
                         <tr>
 
                             <th>Name</th>
+
                             <th>Phone</th>
+
                             <th>Device</th>
-                            <th>Status</th>
 
                         </tr>
 
@@ -42,23 +120,19 @@ function Customers() {
 
                     <tbody>
 
-                        <tr>
+                        {filteredData.map((customer) => (
 
-                            <td>John Doe</td>
-                            <td>08012345678</td>
-                            <td>iPhone 13</td>
-                            <td>In Progress</td>
+                            <tr key={customer.id}>
 
-                        </tr>
+                                <td>{customer.name}</td>
 
-                        <tr>
+                                <td>{customer.phone}</td>
 
-                            <td>Sarah James</td>
-                            <td>08198765432</td>
-                            <td>Samsung A55</td>
-                            <td>Completed</td>
+                                <td>{customer.device}</td>
 
-                        </tr>
+                            </tr>
+
+                        ))}
 
                     </tbody>
 
@@ -67,7 +141,9 @@ function Customers() {
             </section>
 
         </main>
+
     );
+
 }
 
 export default Customers;

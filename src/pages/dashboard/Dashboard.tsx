@@ -2,39 +2,51 @@ import "./Dashboard.css";
 
 import DashboardLayout from "../../layouts/DashboardLayout";
 
+import Topbar from "../../components/dashboard/Topbar";
 import StatCard from "../../components/dashboard/StatCard";
 import QuickActions from "../../components/dashboard/QuickActions";
 import RecentRepairs from "../../components/dashboard/RecentRepairs";
-import Topbar from "../../components/dashboard/Topbar";
 
 import { dashboardStats } from "../../data/dashboard";
 
 function Dashboard() {
+
     return (
+
         <DashboardLayout>
 
-            <Topbar />
+            <main className="dashboard-page">
 
-            <div className="stats-grid">
+                <Topbar />
 
-                {dashboardStats.map((stat) => (
+                <section className="stats-grid">
 
-                    <StatCard
-                        key={stat.id}
-                        title={stat.title}
-                        value={stat.value}
-                    />
+                    {dashboardStats.map((stat, index) => (
 
-                ))}
+                        <StatCard
 
-            </div>
+                            key={index}
 
-            <QuickActions />
+                            title={stat.title}
 
-            <RecentRepairs />
+                            value={stat.value}
+
+                        />
+
+                    ))}
+
+                </section>
+
+                <QuickActions />
+
+                <RecentRepairs />
+
+            </main>
 
         </DashboardLayout>
+
     );
+
 }
 
 export default Dashboard;

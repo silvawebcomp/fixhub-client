@@ -52,3 +52,47 @@
     font-weight: 600;
 
 }
+
+.search-input {
+
+    width: 100%;
+
+    padding: 14px;
+
+    margin-bottom: 20px;
+
+    border: 1px solid #d1d5db;
+
+    border-radius: 10px;
+
+    font-size: 16px;
+
+}
+
+.loading-state {
+
+    padding: 40px;
+
+    text-align: center;
+
+    color: #64748b;
+
+    font-size: 18px;
+
+}
+
+.empty-state {
+
+    padding: 50px;
+
+    text-align: center;
+
+    background: white;
+
+    border-radius: 12px;
+
+    color: #64748b;
+
+    font-size: 18px;
+
+}
