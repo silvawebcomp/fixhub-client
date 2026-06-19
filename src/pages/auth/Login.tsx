@@ -30,17 +30,19 @@ function Login() {
 
         try {
 
-            const user = await loginUser({
+            const response = await loginUser({
+    email,
+    password,
+});
 
-                email,
+localStorage.setItem(
+    "fixhub-token",
+    response.token
+);
 
-                password,
+login(response.user);
 
-            });
-
-            login(user);
-
-            navigate("/dashboard");
+navigate("/dashboard");
 
         }
 

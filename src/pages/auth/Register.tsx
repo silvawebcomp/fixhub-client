@@ -27,19 +27,24 @@ function Register() {
 
         try {
 
-            await registerUser({
+            const response = await registerUser({
 
-                name,
+    name,
 
-                email,
+    email,
 
-                password,
+    password,
 
-            });
+});
 
-            alert("Registration successful.");
+localStorage.setItem(
+    "fixhub-token",
+    response.token
+);
 
-            navigate("/login");
+alert("Account created successfully!");
+
+navigate("/login");
 
         } catch (error) {
 

@@ -4,7 +4,7 @@
 
     min-height: 100vh;
 
-    background: #f4f6fb;
+    background: #0f172a;
 
 }
 
@@ -12,8 +12,18 @@
 
     flex: 1;
 
-    padding: 32px;
+    display: flex;
 
-    overflow-y: auto;
+    flex-direction: column;
+
+}
+
+.dashboard-main {
+
+    flex: 1;
+
+    padding: 2rem;
+
+    background: #f5f7fb;
 
 }
