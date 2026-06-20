@@ -2,7 +2,6 @@ import "./Dashboard.css";
 
 import DashboardLayout from "../../layouts/DashboardLayout";
 
-import Topbar from "../../components/dashboard/Topbar";
 import StatCard from "../../components/dashboard/StatCard";
 import QuickActions from "../../components/dashboard/QuickActions";
 import RecentRepairs from "../../components/dashboard/RecentRepairs";
@@ -15,9 +14,7 @@ function Dashboard() {
 
         <DashboardLayout>
 
-            <main className="dashboard-page">
-
-                <Topbar />
+            <section className="dashboard-page">
 
                 <section className="stats-grid">
 
@@ -41,7 +38,7 @@ function Dashboard() {
 
                 <RecentRepairs />
 
-            </main>
+            </section>
 
         </DashboardLayout>
 

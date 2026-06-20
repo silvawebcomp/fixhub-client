@@ -8,6 +8,10 @@ export interface Repair {
 
     status: string;
 
-    date: string;
+    notes?: string;
+
+    createdAt: string;
+
+    userId: number;
 
 }

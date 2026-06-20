@@ -1,6 +1,8 @@
 const API_URL = "http://localhost:5000/api/repairs";
 
-export async function getRepairs() {
+import type { Repair } from "../types/repair";
+
+export async function getRepairs(): Promise<Repair[]> {
 
     const response = await fetch(API_URL);
 
@@ -14,17 +16,23 @@ export async function getRepairs() {
 
 }
 
-export async function createRepair(repair: {
+export async function createRepair(
 
-    customer: string;
+    repair: {
 
-    device: string;
+        customer: string;
 
-    status: string;
+        device: string;
 
-    date: string;
+        status: string;
 
-}) {
+        notes?: string;
+
+        userId: number;
+
+    }
+
+): Promise<Repair> {
 
     const response = await fetch(API_URL, {
 
@@ -62,11 +70,11 @@ export async function updateRepair(
 
         status: string;
 
-        date: string;
+        notes?: string;
 
     }
 
-) {
+): Promise<Repair> {
 
     const response = await fetch(
 
@@ -98,7 +106,11 @@ export async function updateRepair(
 
 }
 
-export async function deleteRepair(id: number) {
+export async function deleteRepair(
+
+    id: number
+
+): Promise<void> {
 
     const response = await fetch(
 
@@ -117,7 +129,5 @@ export async function deleteRepair(id: number) {
         throw new Error("Failed to delete repair");
 
     }
-
-    return await response.json();
 
 }

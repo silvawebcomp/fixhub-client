@@ -29,15 +29,17 @@ function NewRepair() {
 
             await createRepair({
 
-                customer,
+    customer,
 
-                device,
+    device,
 
-                status,
+    status,
 
-                date: "Today",
+    notes: "",
 
-            });
+    userId: 1,
+
+});
 
             navigate("/repairs");
 

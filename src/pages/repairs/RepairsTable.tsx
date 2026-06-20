@@ -159,7 +159,15 @@ function RepairsTable() {
 
                                 </td>
 
-                                <td>{repair.date}</td>
+                                <td>
+
+    {new Date(
+
+        repair.createdAt
+
+    ).toLocaleDateString()}
+
+</td>
 
                                 <td>
 
