@@ -1,14 +1,62 @@
 import "./Dashboard.css";
 
+import { useEffect, useState } from "react";
+
 import DashboardLayout from "../../layouts/DashboardLayout";
 
 import StatCard from "../../components/dashboard/StatCard";
 import QuickActions from "../../components/dashboard/QuickActions";
 import RecentRepairs from "../../components/dashboard/RecentRepairs";
 
-import { dashboardStats } from "../../data/dashboard";
+import {
+
+    getDashboardStats,
+
+    type DashboardStats,
+
+} from "../../services/dashboardService";
 
 function Dashboard() {
+
+    const [
+
+        stats,
+
+        setStats,
+
+    ] = useState<DashboardStats>({
+
+        totalRepairs: 0,
+
+        activeRepairs: 0,
+
+        customers: 0,
+
+        inventoryItems: 0,
+
+    });
+
+    useEffect(() => {
+
+        async function loadDashboard() {
+
+            try {
+
+                const data = await getDashboardStats();
+
+                setStats(data);
+
+            } catch (error) {
+
+                console.error(error);
+
+            }
+
+        }
+
+        loadDashboard();
+
+    }, []);
 
     return (
 
@@ -18,19 +66,37 @@ function Dashboard() {
 
                 <section className="stats-grid">
 
-                    {dashboardStats.map((stat, index) => (
+                    <StatCard
 
-                        <StatCard
+                        title="Total Repairs"
 
-                            key={index}
+                        value={stats.totalRepairs}
 
-                            title={stat.title}
+                    />
 
-                            value={stat.value}
+                    <StatCard
 
-                        />
+                        title="Active Repairs"
 
-                    ))}
+                        value={stats.activeRepairs}
+
+                    />
+
+                    <StatCard
+
+                        title="Customers"
+
+                        value={stats.customers}
+
+                    />
+
+                    <StatCard
+
+                        title="Inventory"
+
+                        value={stats.inventoryItems}
+
+                    />
 
                 </section>
 
