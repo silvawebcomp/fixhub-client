@@ -1,6 +1,7 @@
 import "./Customers.css";
 
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 
 import { getCustomers } from "../../services/customerService";
 
@@ -28,7 +29,7 @@ function Customers() {
 
         (customer) =>
 
-            `${customer.name} ${customer.phone} ${customer.device}`
+            `${customer.name} ${customer.phone} ${customer.email ?? ""}`
 
     );
 
@@ -72,11 +73,12 @@ function Customers() {
 
                 <h1>Customers</h1>
 
-                <button className="add-customer-btn">
-
+                <Link
+                    to="/customers/new"
+                    className="add-customer-btn"
+                >
                     + Add Customer
-
-                </button>
+                </Link>
 
             </header>
 
@@ -112,7 +114,7 @@ function Customers() {
 
                             <th>Phone</th>
 
-                            <th>Device</th>
+                            <th>Email</th>
 
                         </tr>
 
@@ -128,7 +130,7 @@ function Customers() {
 
                                 <td>{customer.phone}</td>
 
-                                <td>{customer.device}</td>
+                                <td>{customer.email}</td>
 
                             </tr>
 

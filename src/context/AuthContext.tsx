@@ -1,23 +1,14 @@
 import {
-
     createContext,
-
-    useEffect,
-
     useState,
-
 } from "react";
 
 import type {
-
     ReactNode,
-
 } from "react";
 
 import type {
-
     User,
-
 } from "../types/user";
 
 type AuthContextType = {
@@ -33,9 +24,7 @@ type AuthContextType = {
 };
 
 export const AuthContext = createContext<AuthContextType>(
-
     {} as AuthContextType
-
 );
 
 type AuthProviderProps = {
@@ -50,36 +39,23 @@ export function AuthProvider({
 
 }: AuthProviderProps) {
 
-    const [user, setUser] = useState<User | null>(null);
-
-    useEffect(() => {
+    const [user, setUser] = useState<User | null>(() => {
 
         const storedUser = localStorage.getItem(
-
             "fixhub-user"
-
         );
 
-        if (storedUser) {
+        return storedUser
+            ? JSON.parse(storedUser)
+            : null;
 
-            queueMicrotask(() => {
-
-                setUser(JSON.parse(storedUser));
-
-            });
-
-        }
-
-    }, []);
+    });
 
     function login(user: User) {
 
         localStorage.setItem(
-
             "fixhub-user",
-
             JSON.stringify(user)
-
         );
 
         setUser(user);
@@ -89,9 +65,11 @@ export function AuthProvider({
     function logout() {
 
         localStorage.removeItem(
-
             "fixhub-user"
+        );
 
+        localStorage.removeItem(
+            "fixhub-token"
         );
 
         setUser(null);

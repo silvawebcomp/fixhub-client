@@ -1,80 +1,131 @@
-import "./Customers.css";
+import "./AddCustomer.css";
 
-function Customers() {
-  return (
-    <main className="customers-page">
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
-      <header className="customers-header">
-        <h1>Customers</h1>
+function AddCustomer() {
 
-        <button className="add-customer-btn">
-          + Add Customer
-        </button>
-      </header>
+    const navigate = useNavigate();
 
-      <section className="customers-search">
+    const [name, setName] = useState("");
 
-        <input
-          type="text"
-          placeholder="Search customers..."
-        />
+    const [phone, setPhone] = useState("");
 
-      </section>
+    const [email, setEmail] = useState("");
 
-      <section className="customers-table">
+    const [loading, setLoading] = useState(false);
 
-        <table>
+    async function handleSubmit(
+        event: React.FormEvent<HTMLFormElement>
+    ) {
 
-          <thead>
+        event.preventDefault();
 
-            <tr>
+        setLoading(true);
 
-              <th>Name</th>
+        try {
 
-              <th>Phone</th>
+            const response = await fetch(
+                "http://localhost:5000/api/customers",
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        name,
+                        phone,
+                        email,
+                        userId: 1,
+                    }),
+                }
+            );
 
-              <th>Device</th>
+            if (!response.ok) {
 
-              <th>Status</th>
+                throw new Error(
+                    "Failed to create customer"
+                );
 
-            </tr>
+            }
 
-          </thead>
+            alert("Customer created successfully");
 
-          <tbody>
+            navigate("/customers");
 
-            <tr>
+        } catch (error) {
 
-              <td>John Doe</td>
+            console.error(error);
 
-              <td>08012345678</td>
+            alert("Unable to create customer");
 
-              <td>iPhone 13</td>
+        } finally {
 
-              <td>In Progress</td>
+            setLoading(false);
 
-            </tr>
+        }
 
-            <tr>
+    }
 
-              <td>Sarah James</td>
+    return (
 
-              <td>08198765432</td>
+        <main className="add-customer-page">
 
-              <td>Samsung A55</td>
+            <h1>Add Customer</h1>
 
-              <td>Completed</td>
+            <form
+                className="customer-form"
+                onSubmit={handleSubmit}
+            >
 
-            </tr>
+                <input
+                    type="text"
+                    placeholder="Customer Name"
+                    value={name}
+                    onChange={(event) =>
+                        setName(event.target.value)
+                    }
+                    required
+                />
 
-          </tbody>
+                <input
+                    type="text"
+                    placeholder="Phone Number"
+                    value={phone}
+                    onChange={(event) =>
+                        setPhone(event.target.value)
+                    }
+                    required
+                />
 
-        </table>
+                <input
+                    type="email"
+                    placeholder="Email Address"
+                    value={email}
+                    onChange={(event) =>
+                        setEmail(event.target.value)
+                    }
+                />
 
-      </section>
+                <button
+                    type="submit"
+                    disabled={loading}
+                >
 
-    </main>
-  );
+                    {
+                        loading
+                            ? "Saving..."
+                            : "Save Customer"
+                    }
+
+                </button>
+
+            </form>
+
+        </main>
+
+    );
+
 }
 
-export default Customers;
+export default AddCustomer;

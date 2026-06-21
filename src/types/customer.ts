@@ -6,6 +6,10 @@ export interface Customer {
 
     phone: string;
 
-    device: string;
+    email: string | null;
+
+    createdAt: string;
+
+    userId: number;
 
 }

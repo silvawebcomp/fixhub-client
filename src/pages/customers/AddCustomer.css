@@ -1,64 +1,43 @@
-.customers-page {
-    padding: 40px;
+.add-customer-page {
+
+    padding: 2rem;
+
 }
 
-.customers-header {
+.customer-form {
 
     display: flex;
 
-    justify-content: space-between;
+    flex-direction: column;
 
-    align-items: center;
+    gap: 1rem;
 
-    margin-bottom: 30px;
+    max-width: 500px;
+
 }
 
-.add-customer-btn {
-
-    background: #3366e8;
-
-    color: white;
-
-    border: none;
-
-    padding: 12px 20px;
-
-    border-radius: 8px;
-
-    cursor: pointer;
-}
-
-.customers-search {
-
-    margin-bottom: 30px;
-}
-
-.customers-search input {
-
-    width: 100%;
-
-    max-width: 400px;
+.customer-form input {
 
     padding: 12px;
 
-    border: 1px solid #ddd;
+    border: 1px solid #d1d5db;
 
     border-radius: 8px;
+
 }
 
-.customers-table table {
+.customer-form button {
 
-    width: 100%;
+    padding: 12px;
 
-    border-collapse: collapse;
-}
+    border: none;
 
-.customers-table th,
-.customers-table td {
+    border-radius: 8px;
 
-    padding: 15px;
+    background: #2563eb;
 
-    border-bottom: 1px solid #eee;
+    color: white;
 
-    text-align: left;
+    cursor: pointer;
+
 }

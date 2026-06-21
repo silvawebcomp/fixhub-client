@@ -19,9 +19,13 @@ import Login from "../pages/auth/Login";
 import Register from "../pages/auth/Register";
 
 import Dashboard from "../pages/dashboard/Dashboard";
+
 import Repairs from "../pages/repairs/Repairs";
 import NewRepair from "../pages/repairs/NewRepair";
+
 import Customers from "../pages/customers/Customers";
+import AddCustomer from "../pages/customers/AddCustomer";
+
 import Inventory from "../pages/inventory/Inventory";
 
 import ProtectedRoute from "../components/auth/ProtectedRoute";
@@ -59,107 +63,72 @@ function AppRouter() {
             <Routes>
 
                 <Route
-
                     path="/"
-
                     element={<LandingPage />}
-
                 />
 
                 <Route
-
                     path="/login"
-
                     element={<Login />}
-
                 />
 
                 <Route
-
                     path="/register"
-
                     element={<Register />}
-
                 />
 
                 <Route
-
                     path="/dashboard"
-
                     element={
-
                         <ProtectedRoute>
-
                             <Dashboard />
-
                         </ProtectedRoute>
-
                     }
-
                 />
 
                 <Route
-
                     path="/repairs"
-
                     element={
-
                         <ProtectedRoute>
-
                             <Repairs />
-
                         </ProtectedRoute>
-
                     }
-
                 />
 
                 <Route
-
                     path="/repairs/new"
-
                     element={
-
                         <ProtectedRoute>
-
                             <NewRepair />
-
                         </ProtectedRoute>
-
                     }
-
                 />
 
                 <Route
-
                     path="/customers"
-
                     element={
-
                         <ProtectedRoute>
-
                             <Customers />
-
                         </ProtectedRoute>
-
                     }
-
                 />
 
                 <Route
-
-                    path="/inventory"
-
+                    path="/customers/new"
                     element={
-
                         <ProtectedRoute>
-
-                            <Inventory />
-
+                            <AddCustomer />
                         </ProtectedRoute>
-
                     }
+                />
 
+                <Route
+                    path="/inventory"
+                    element={
+                        <ProtectedRoute>
+                            <Inventory />
+                        </ProtectedRoute>
+                    }
                 />
 
             </Routes>
