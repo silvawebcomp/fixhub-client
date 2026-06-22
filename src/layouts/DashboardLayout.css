@@ -1,29 +1,27 @@
 .dashboard-layout {
-
     display: flex;
-
     min-height: 100vh;
-
-    background: #0f172a;
-
+    background: #f3f6fb;
 }
 
 .dashboard-content {
-
     flex: 1;
-
     display: flex;
-
+    min-width: 0;
     flex-direction: column;
-
 }
 
 .dashboard-main {
-
     flex: 1;
+    padding: 24px;
+}
 
-    padding: 2rem;
+@media (max-width: 860px) {
+    .dashboard-layout {
+        flex-direction: column;
+    }
 
-    background: #f5f7fb;
-
+    .dashboard-main {
+        padding: 16px;
+    }
 }

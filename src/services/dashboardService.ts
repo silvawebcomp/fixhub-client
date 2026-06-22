@@ -1,4 +1,4 @@
-const API_URL = "http://localhost:5000/api/dashboard";
+import { apiRequest } from "./api";
 
 export interface DashboardStats {
 
@@ -14,22 +14,6 @@ export interface DashboardStats {
 
 export async function getDashboardStats(): Promise<DashboardStats> {
 
-    const response = await fetch(
-
-        `${API_URL}/stats`
-
-    );
-
-    if (!response.ok) {
-
-        throw new Error(
-
-            "Failed to load dashboard statistics"
-
-        );
-
-    }
-
-    return await response.json();
+    return apiRequest<DashboardStats>("/dashboard/stats");
 
 }

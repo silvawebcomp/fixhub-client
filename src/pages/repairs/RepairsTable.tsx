@@ -39,7 +39,26 @@ function RepairsTable() {
 
     useEffect(() => {
 
-        loadRepairs();
+        let active = true;
+
+        getRepairs()
+            .then((data) => {
+                if (active) {
+                    setRepairs(data);
+                }
+            })
+            .catch((error) => {
+                console.error(error);
+            })
+            .finally(() => {
+                if (active) {
+                    setLoading(false);
+                }
+            });
+
+        return () => {
+            active = false;
+        };
 
     }, []);
 
@@ -91,7 +110,7 @@ function RepairsTable() {
 
     if (loading) {
 
-        return <p>Loading repairs...</p>;
+        return <p className="loading-state">Loading repairs...</p>;
 
     }
 
@@ -116,6 +135,12 @@ function RepairsTable() {
                 }
 
             />
+
+            {filteredData.length === 0 ? (
+
+                <p className="empty-state">No repairs found.</p>
+
+            ) : (
 
             <section className="repairs-table">
 
@@ -198,6 +223,8 @@ function RepairsTable() {
                 </table>
 
             </section>
+
+            )}
 
         </>
 

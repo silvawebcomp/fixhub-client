@@ -4,10 +4,12 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { registerUser } from "../../services/authService";
+import { useAuth } from "../../hooks/useAuth";
 
 function Register() {
 
     const navigate = useNavigate();
+    const { login } = useAuth();
 
     const [name, setName] = useState("");
 
@@ -28,23 +30,14 @@ function Register() {
         try {
 
             const response = await registerUser({
+                name,
+                email,
+                password,
+            });
 
-    name,
+            login(response.user, response.token);
 
-    email,
-
-    password,
-
-});
-
-localStorage.setItem(
-    "fixhub-token",
-    response.token
-);
-
-alert("Account created successfully!");
-
-navigate("/login");
+            navigate("/dashboard");
 
         } catch (error) {
 

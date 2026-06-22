@@ -1,5 +1,4 @@
 import {
-    createContext,
     useState,
 } from "react";
 
@@ -10,22 +9,7 @@ import type {
 import type {
     User,
 } from "../types/user";
-
-type AuthContextType = {
-
-    user: User | null;
-
-    login: (user: User) => void;
-
-    logout: () => void;
-
-    isAuthenticated: boolean;
-
-};
-
-export const AuthContext = createContext<AuthContextType>(
-    {} as AuthContextType
-);
+import { AuthContext } from "./authContextValue";
 
 type AuthProviderProps = {
 
@@ -51,12 +35,21 @@ export function AuthProvider({
 
     });
 
-    function login(user: User) {
+    function login(user: User, token?: string) {
 
         localStorage.setItem(
             "fixhub-user",
             JSON.stringify(user)
         );
+
+        if (token) {
+
+            localStorage.setItem(
+                "fixhub-token",
+                token
+            );
+
+        }
 
         setUser(user);
 

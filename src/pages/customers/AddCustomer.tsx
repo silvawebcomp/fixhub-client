@@ -2,6 +2,8 @@ import "./AddCustomer.css";
 
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import DashboardLayout from "../../layouts/DashboardLayout";
+import { createCustomer } from "../../services/customerService";
 
 function AddCustomer() {
 
@@ -25,31 +27,11 @@ function AddCustomer() {
 
         try {
 
-            const response = await fetch(
-                "http://localhost:5000/api/customers",
-                {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({
-                        name,
-                        phone,
-                        email,
-                        userId: 1,
-                    }),
-                }
-            );
-
-            if (!response.ok) {
-
-                throw new Error(
-                    "Failed to create customer"
-                );
-
-            }
-
-            alert("Customer created successfully");
+            await createCustomer({
+                name,
+                phone,
+                email,
+            });
 
             navigate("/customers");
 
@@ -68,6 +50,8 @@ function AddCustomer() {
     }
 
     return (
+
+        <DashboardLayout>
 
         <main className="add-customer-page">
 
@@ -123,6 +107,8 @@ function AddCustomer() {
             </form>
 
         </main>
+
+        </DashboardLayout>
 
     );
 

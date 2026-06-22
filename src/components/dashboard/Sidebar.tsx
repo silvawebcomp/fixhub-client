@@ -15,7 +15,7 @@ function Sidebar() {
                     Dashboard
                 </NavLink>
 
-                <NavLink to="/repairs/new">
+                <NavLink to="/repairs">
                     Repairs
                 </NavLink>
 
@@ -25,10 +25,6 @@ function Sidebar() {
 
                 <NavLink to="/inventory">
                     Inventory
-                </NavLink>
-
-                <NavLink to="/settings">
-                    Settings
                 </NavLink>
 
             </nav>

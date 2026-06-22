@@ -1,11 +1,7 @@
 import {
-
     BrowserRouter,
-
     Routes,
-
     Route,
-
 } from "react-router-dom";
 
 import Hero from "../pages/landing/Hero";
@@ -27,6 +23,7 @@ import Customers from "../pages/customers/Customers";
 import AddCustomer from "../pages/customers/AddCustomer";
 
 import Inventory from "../pages/inventory/Inventory";
+import AddInventory from "../pages/inventory/AddInventory";
 
 import ProtectedRoute from "../components/auth/ProtectedRoute";
 
@@ -127,6 +124,15 @@ function AppRouter() {
                     element={
                         <ProtectedRoute>
                             <Inventory />
+                        </ProtectedRoute>
+                    }
+                />
+
+                <Route
+                    path="/inventory/new"
+                    element={
+                        <ProtectedRoute>
+                            <AddInventory />
                         </ProtectedRoute>
                     }
                 />

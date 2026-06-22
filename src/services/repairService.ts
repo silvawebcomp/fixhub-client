@@ -1,18 +1,9 @@
-const API_URL = "http://localhost:5000/api/repairs";
-
 import type { Repair } from "../types/repair";
+import { apiRequest } from "./api";
 
 export async function getRepairs(): Promise<Repair[]> {
 
-    const response = await fetch(API_URL);
-
-    if (!response.ok) {
-
-        throw new Error("Failed to fetch repairs");
-
-    }
-
-    return await response.json();
+    return apiRequest<Repair[]>("/repairs");
 
 }
 
@@ -28,33 +19,14 @@ export async function createRepair(
 
         notes?: string;
 
-        userId: number;
-
     }
 
 ): Promise<Repair> {
 
-    const response = await fetch(API_URL, {
-
+    return apiRequest<Repair>("/repairs", {
         method: "POST",
-
-        headers: {
-
-            "Content-Type": "application/json",
-
-        },
-
         body: JSON.stringify(repair),
-
     });
-
-    if (!response.ok) {
-
-        throw new Error("Failed to create repair");
-
-    }
-
-    return await response.json();
 
 }
 
@@ -76,33 +48,10 @@ export async function updateRepair(
 
 ): Promise<Repair> {
 
-    const response = await fetch(
-
-        `${API_URL}/${id}`,
-
-        {
-
-            method: "PUT",
-
-            headers: {
-
-                "Content-Type": "application/json",
-
-            },
-
-            body: JSON.stringify(repair),
-
-        }
-
-    );
-
-    if (!response.ok) {
-
-        throw new Error("Failed to update repair");
-
-    }
-
-    return await response.json();
+    return apiRequest<Repair>(`/repairs/${id}`, {
+        method: "PUT",
+        body: JSON.stringify(repair),
+    });
 
 }
 
@@ -112,22 +61,8 @@ export async function deleteRepair(
 
 ): Promise<void> {
 
-    const response = await fetch(
-
-        `${API_URL}/${id}`,
-
-        {
-
-            method: "DELETE",
-
-        }
-
-    );
-
-    if (!response.ok) {
-
-        throw new Error("Failed to delete repair");
-
-    }
+    await apiRequest(`/repairs/${id}`, {
+        method: "DELETE",
+    });
 
 }

@@ -1,15 +1,25 @@
-const API_URL = "http://localhost:5000/api/customers";
+import type { Customer } from "../types/customer";
+import { apiRequest } from "./api";
+
+type CustomerPayload = {
+    name: string;
+    phone: string;
+    email?: string;
+};
 
 export async function getCustomers() {
+    return apiRequest<Customer[]>("/customers");
+}
 
-    const response = await fetch(API_URL);
+export async function createCustomer(customer: CustomerPayload) {
+    return apiRequest<Customer>("/customers", {
+        method: "POST",
+        body: JSON.stringify(customer),
+    });
+}
 
-    if (!response.ok) {
-
-        throw new Error("Failed to fetch customers");
-
-    }
-
-    return await response.json();
-
+export async function deleteCustomer(id: number) {
+    await apiRequest(`/customers/${id}`, {
+        method: "DELETE",
+    });
 }

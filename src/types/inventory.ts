@@ -2,8 +2,14 @@ export interface InventoryItem {
 
     id: number;
 
-    item: string;
+    name: string;
 
     quantity: number;
+
+    price: number;
+
+    createdAt: string;
+
+    userId: number;
 
 }

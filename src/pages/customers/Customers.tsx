@@ -3,7 +3,11 @@ import "./Customers.css";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
-import { getCustomers } from "../../services/customerService";
+import DashboardLayout from "../../layouts/DashboardLayout";
+import {
+    deleteCustomer,
+    getCustomers,
+} from "../../services/customerService";
 
 import { useSearch } from "../../hooks/useSearch";
 
@@ -33,51 +37,77 @@ function Customers() {
 
     );
 
-    useEffect(() => {
+    async function handleDelete(id: number) {
+        const confirmed = window.confirm("Delete this customer?");
 
-        async function loadCustomers() {
-
-            try {
-
-                const data = await getCustomers();
-
-                setCustomers(data);
-
-            } catch (error) {
-
-                console.error(error);
-
-            } finally {
-
-                setLoading(false);
-
-            }
-
+        if (!confirmed) {
+            return;
         }
 
-        loadCustomers();
+        try {
+            await deleteCustomer(id);
+            setCustomers((current) =>
+                current.filter((customer) => customer.id !== id)
+            );
+        } catch (error) {
+            console.error(error);
+            alert("Unable to delete customer.");
+        }
+    }
+
+    useEffect(() => {
+
+        let active = true;
+
+        getCustomers()
+            .then((data) => {
+                if (active) {
+                    setCustomers(data);
+                }
+            })
+            .catch((error) => {
+                console.error(error);
+            })
+            .finally(() => {
+                if (active) {
+                    setLoading(false);
+                }
+            });
+
+        return () => {
+            active = false;
+        };
 
     }, []);
 
     if (loading) {
 
-        return <p>Loading customers...</p>;
+        return (
+            <DashboardLayout>
+                <p className="loading-state">Loading customers...</p>
+            </DashboardLayout>
+        );
 
     }
 
     return (
 
+        <DashboardLayout>
+
         <main className="customers-page">
 
             <header className="customers-header">
 
-                <h1>Customers</h1>
+                <div>
+                    <p className="eyebrow">Client Directory</p>
+                    <h1>Customers</h1>
+                </div>
 
                 <Link
                     to="/customers/new"
                     className="add-customer-btn"
                 >
-                    + Add Customer
+                    Add Customer
                 </Link>
 
             </header>
@@ -116,6 +146,8 @@ function Customers() {
 
                             <th>Email</th>
 
+                            <th>Action</th>
+
                         </tr>
 
                     </thead>
@@ -130,7 +162,18 @@ function Customers() {
 
                                 <td>{customer.phone}</td>
 
-                                <td>{customer.email}</td>
+                                <td>{customer.email || "Not provided"}</td>
+
+                                <td>
+                                    <button
+                                        className="danger-button"
+                                        onClick={() =>
+                                            void handleDelete(customer.id)
+                                        }
+                                    >
+                                        Delete
+                                    </button>
+                                </td>
 
                             </tr>
 
@@ -143,6 +186,8 @@ function Customers() {
             </section>
 
         </main>
+
+        </DashboardLayout>
 
     );
 

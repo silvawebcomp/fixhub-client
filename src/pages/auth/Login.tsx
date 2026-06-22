@@ -31,16 +31,11 @@ function Login() {
         try {
 
             const response = await loginUser({
-    email,
-    password,
-});
+                email,
+                password,
+            });
 
-localStorage.setItem(
-    "fixhub-token",
-    response.token
-);
-
-login(response.user);
+            login(response.user, response.token);
 
 navigate("/dashboard");
 

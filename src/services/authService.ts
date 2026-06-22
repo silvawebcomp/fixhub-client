@@ -1,4 +1,10 @@
-const API_URL = "http://localhost:5000/api/auth";
+import { apiRequest } from "./api";
+import type { User } from "../types/user";
+
+type AuthResponse = {
+    token: string;
+    user: User;
+};
 
 type LoginPayload = {
     email: string;
@@ -9,26 +15,11 @@ export async function loginUser(
     payload: LoginPayload
 ) {
 
-    const response = await fetch(
-        `${API_URL}/login`,
-        {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(payload),
-        }
-    );
-
-    const data = await response.json();
-
-    if (!response.ok) {
-        throw new Error(
-            data.message || "Login failed"
-        );
-    }
-
-    return data;
+    return apiRequest<AuthResponse>("/auth/login", {
+        method: "POST",
+        auth: false,
+        body: JSON.stringify(payload),
+    });
 }
 
 type RegisterPayload = {
@@ -41,24 +32,9 @@ export async function registerUser(
     payload: RegisterPayload
 ) {
 
-    const response = await fetch(
-        `${API_URL}/register`,
-        {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(payload),
-        }
-    );
-
-    const data = await response.json();
-
-    if (!response.ok) {
-        throw new Error(
-            data.message || "Registration failed"
-        );
-    }
-
-    return data;
+    return apiRequest<AuthResponse>("/auth/register", {
+        method: "POST",
+        auth: false,
+        body: JSON.stringify(payload),
+    });
 }

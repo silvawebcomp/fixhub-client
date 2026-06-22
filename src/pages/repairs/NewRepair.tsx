@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { createRepair } from "../../services/repairService";
+import DashboardLayout from "../../layouts/DashboardLayout";
 
 function NewRepair() {
 
@@ -28,18 +29,11 @@ function NewRepair() {
         try {
 
             await createRepair({
-
-    customer,
-
-    device,
-
-    status,
-
-    notes: "",
-
-    userId: 1,
-
-});
+                customer,
+                device,
+                status,
+                notes: "",
+            });
 
             navigate("/repairs");
 
@@ -59,7 +53,9 @@ function NewRepair() {
 
     return (
 
-        <main className="new-repair-page">
+        <DashboardLayout>
+
+            <main className="new-repair-page">
 
             <h1>New Repair</h1>
 
@@ -118,7 +114,9 @@ function NewRepair() {
 
             </form>
 
-        </main>
+            </main>
+
+        </DashboardLayout>
 
     );
 
