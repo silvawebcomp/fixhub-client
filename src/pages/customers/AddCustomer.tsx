@@ -1,80 +1,117 @@
-import "./Customers.css";
+import "./AddCustomer.css";
 
-function Customers() {
-  return (
-    <main className="customers-page">
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import DashboardLayout from "../../layouts/DashboardLayout";
+import { createCustomer } from "../../services/customerService";
 
-      <header className="customers-header">
-        <h1>Customers</h1>
+function AddCustomer() {
 
-        <button className="add-customer-btn">
-          + Add Customer
-        </button>
-      </header>
+    const navigate = useNavigate();
 
-      <section className="customers-search">
+    const [name, setName] = useState("");
 
-        <input
-          type="text"
-          placeholder="Search customers..."
-        />
+    const [phone, setPhone] = useState("");
 
-      </section>
+    const [email, setEmail] = useState("");
 
-      <section className="customers-table">
+    const [loading, setLoading] = useState(false);
 
-        <table>
+    async function handleSubmit(
+        event: React.FormEvent<HTMLFormElement>
+    ) {
 
-          <thead>
+        event.preventDefault();
 
-            <tr>
+        setLoading(true);
 
-              <th>Name</th>
+        try {
 
-              <th>Phone</th>
+            await createCustomer({
+                name,
+                phone,
+                email,
+            });
 
-              <th>Device</th>
+            navigate("/customers");
 
-              <th>Status</th>
+        } catch (error) {
 
-            </tr>
+            console.error(error);
 
-          </thead>
+            alert("Unable to create customer");
 
-          <tbody>
+        } finally {
 
-            <tr>
+            setLoading(false);
 
-              <td>John Doe</td>
+        }
 
-              <td>08012345678</td>
+    }
 
-              <td>iPhone 13</td>
+    return (
 
-              <td>In Progress</td>
+        <DashboardLayout>
 
-            </tr>
+        <main className="add-customer-page">
 
-            <tr>
+            <h1>Add Customer</h1>
 
-              <td>Sarah James</td>
+            <form
+                className="customer-form"
+                onSubmit={handleSubmit}
+            >
 
-              <td>08198765432</td>
+                <input
+                    type="text"
+                    placeholder="Customer Name"
+                    value={name}
+                    onChange={(event) =>
+                        setName(event.target.value)
+                    }
+                    required
+                />
 
-              <td>Samsung A55</td>
+                <input
+                    type="text"
+                    placeholder="Phone Number"
+                    value={phone}
+                    onChange={(event) =>
+                        setPhone(event.target.value)
+                    }
+                    required
+                />
 
-              <td>Completed</td>
+                <input
+                    type="email"
+                    placeholder="Email Address"
+                    value={email}
+                    onChange={(event) =>
+                        setEmail(event.target.value)
+                    }
+                />
 
-            </tr>
+                <button
+                    type="submit"
+                    disabled={loading}
+                >
 
-          </tbody>
+                    {
+                        loading
+                            ? "Saving..."
+                            : "Save Customer"
+                    }
 
-        </table>
+                </button>
 
-      </section>
+            </form>
 
-    </main>
-  );
+        </main>
+
+        </DashboardLayout>
+
+    );
+
 }
 
-export default Customers;
+export default AddCustomer;

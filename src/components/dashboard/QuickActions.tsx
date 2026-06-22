@@ -1,5 +1,7 @@
 import "./QuickActions.css";
 
+import { Link } from "react-router-dom";
+
 function QuickActions() {
     return (
 
@@ -7,11 +9,11 @@ function QuickActions() {
 
             <h2>Quick Actions</h2>
 
-            <button>+ New Repair</button>
+            <Link to="/repairs/new">New Repair</Link>
 
-            <button>+ Add Customer</button>
+            <Link to="/customers/new">Add Customer</Link>
 
-            <button>+ Create Invoice</button>
+            <Link to="/inventory/new">Add Inventory</Link>
 
         </section>
 

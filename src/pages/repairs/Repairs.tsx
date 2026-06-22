@@ -1,9 +1,9 @@
 import "./Repairs.css";
 
 import DashboardLayout from "../../layouts/DashboardLayout";
-import Topbar from "../../components/dashboard/Topbar";
 import RepairsTable from "./RepairsTable";
-import SearchBar from "../../components/dashboard/SearchBar";
+
+import { Link } from "react-router-dom";
 
 function Repairs() {
 
@@ -11,25 +11,20 @@ function Repairs() {
 
         <DashboardLayout>
 
-            <Topbar />
-
             <main className="repairs-page">
 
                 <div className="repairs-header">
 
                     <h2>Repairs</h2>
 
-                    <button className="new-repair-btn">
-
+                    <Link
+                        to="/repairs/new"
+                        className="new-repair-btn"
+                    >
                         + New Repair
-
-                    </button>
+                    </Link>
 
                 </div>
-
-                <SearchBar
-                    placeholder="Search repairs..."
-                />
 
                 <RepairsTable />
 
@@ -41,4 +36,4 @@ function Repairs() {
 
 }
 
-export default Repairs; 
+export default Repairs;

@@ -1,40 +1,115 @@
 import "./Dashboard.css";
 
+import { useEffect, useState } from "react";
+
 import DashboardLayout from "../../layouts/DashboardLayout";
 
 import StatCard from "../../components/dashboard/StatCard";
 import QuickActions from "../../components/dashboard/QuickActions";
 import RecentRepairs from "../../components/dashboard/RecentRepairs";
-import Topbar from "../../components/dashboard/Topbar";
 
-import { dashboardStats } from "../../data/dashboard";
+import {
+
+    getDashboardStats,
+
+    type DashboardStats,
+
+} from "../../services/dashboardService";
 
 function Dashboard() {
+
+    const [
+
+        stats,
+
+        setStats,
+
+    ] = useState<DashboardStats>({
+
+        totalRepairs: 0,
+
+        activeRepairs: 0,
+
+        customers: 0,
+
+        inventoryItems: 0,
+
+    });
+
+    useEffect(() => {
+
+        async function loadDashboard() {
+
+            try {
+
+                const data = await getDashboardStats();
+
+                setStats(data);
+
+            } catch (error) {
+
+                console.error(error);
+
+            }
+
+        }
+
+        loadDashboard();
+
+    }, []);
+
     return (
+
         <DashboardLayout>
 
-            <Topbar />
+            <section className="dashboard-page">
 
-            <div className="stats-grid">
-
-                {dashboardStats.map((stat) => (
+                <section className="stats-grid">
 
                     <StatCard
-                        key={stat.id}
-                        title={stat.title}
-                        value={stat.value}
+
+                        title="Total Repairs"
+
+                        value={stats.totalRepairs}
+
                     />
 
-                ))}
+                    <StatCard
 
-            </div>
+                        title="Active Repairs"
 
-            <QuickActions />
+                        value={stats.activeRepairs}
 
-            <RecentRepairs />
+                    />
+
+                    <StatCard
+
+                        title="Customers"
+
+                        value={stats.customers}
+
+                    />
+
+                    <StatCard
+
+                        title="Inventory"
+
+                        value={stats.inventoryItems}
+
+                    />
+
+                </section>
+
+                <QuickActions />
+
+                <RecentRepairs />
+
+            </section>
 
         </DashboardLayout>
+
     );
+
 }
 
 export default Dashboard;

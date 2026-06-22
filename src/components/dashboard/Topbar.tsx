@@ -1,39 +1,53 @@
 import "./Topbar.css";
 
+import { useNavigate } from "react-router-dom";
+
+import { useAuth } from "../../hooks/useAuth";
+
 function Topbar() {
+
+    const navigate = useNavigate();
+
+    const { logout } = useAuth();
+
+    function handleLogout() {
+
+        logout();
+
+        navigate("/login");
+
+    }
+
     return (
+
         <header className="topbar">
 
             <div>
 
-                <h1>Welcome back, Sam 👋</h1>
+                <h2>
 
-                <p>
-                    Manage repairs, customers and your business from one place.
-                </p>
+                    FixHub Dashboard
 
-            </div>
-
-            <div className="topbar-user">
-
-                <button className="notification-btn">
-                    🔔
-                </button>
-
-                <div className="user-profile">
-
-                    <div className="avatar">
-                        S
-                    </div>
-
-                    <span>Sam</span>
-
-                </div>
+                </h2>
 
             </div>
+
+            <button
+
+                className="logout-btn"
+
+                onClick={handleLogout}
+
+            >
+
+                Logout
+
+            </button>
 
         </header>
+
     );
+
 }
 
 export default Topbar;

@@ -1,45 +1,24 @@
 .repairs-page {
-
-    display: flex;
-
-    flex-direction: column;
-
-    gap: 24px;
-
+    display: grid;
+    gap: 18px;
 }
 
 .repairs-header {
-
     display: flex;
-
-    justify-content: space-between;
-
     align-items: center;
-
+    justify-content: space-between;
+    gap: 18px;
 }
 
-.new-repair-btn {
-
-    background: #2563eb;
-
-    color: white;
-
-    border: none;
-
-    padding: 12px 20px;
-
-    border-radius: 10px;
-
-    cursor: pointer;
-
-    font-weight: 600;
-
-    transition: 0.2s;
-
+.repairs-header h2 {
+    margin: 0;
+    color: #111827;
+    font-size: 30px;
 }
 
-.new-repair-btn:hover {
-
-    background: #1d4ed8;
-
+@media (max-width: 720px) {
+    .repairs-header {
+        align-items: stretch;
+        flex-direction: column;
+    }
 }

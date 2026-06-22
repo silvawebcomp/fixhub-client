@@ -1,13 +1,20 @@
 import "./DashboardLayout.css";
-import Sidebar from "../components/dashboard/Sidebar";
+
 import type { ReactNode } from "react";
 
+import Sidebar from "../components/dashboard/Sidebar";
+import Topbar from "../components/dashboard/Topbar";
+
 type DashboardLayoutProps = {
+
     children: ReactNode;
+
 };
 
 function DashboardLayout({
+
     children,
+
 }: DashboardLayoutProps) {
 
     return (
@@ -16,11 +23,17 @@ function DashboardLayout({
 
             <Sidebar />
 
-            <main className="dashboard-content">
+            <div className="dashboard-content">
 
-                {children}
+                <Topbar />
 
-            </main>
+                <main className="dashboard-main">
+
+                    {children}
+
+                </main>
+
+            </div>
 
         </div>
 

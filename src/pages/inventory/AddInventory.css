@@ -1,10 +1,14 @@
-.add-customer-page {
+.add-inventory-page {
     display: grid;
-    gap: 20px;
     max-width: 640px;
 }
 
-.customer-form {
+.add-inventory-card {
+    display: grid;
+    gap: 20px;
+}
+
+.inventory-form {
     display: grid;
     gap: 16px;
     border: 1px solid #e5e7eb;
@@ -13,7 +17,7 @@
     padding: 22px;
 }
 
-.customer-form input {
+.inventory-form input {
     width: 100%;
     min-height: 44px;
     border: 1px solid #d8dee9;
@@ -23,7 +27,7 @@
     outline: none;
 }
 
-.customer-form button {
+.inventory-form button {
     min-height: 44px;
     border: 0;
     border-radius: 8px;
@@ -32,6 +36,6 @@
     font-weight: 800;
 }
 
-.customer-form button:hover {
+.inventory-form button:hover {
     background: #1d4ed8;
 }

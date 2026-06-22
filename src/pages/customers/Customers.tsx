@@ -1,24 +1,133 @@
 import "./Customers.css";
 
+import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+
+import DashboardLayout from "../../layouts/DashboardLayout";
+import {
+    deleteCustomer,
+    getCustomers,
+} from "../../services/customerService";
+
+import { useSearch } from "../../hooks/useSearch";
+
+import type { Customer } from "../../types/customer";
+
 function Customers() {
+
+    const [customers, setCustomers] = useState<Customer[]>([]);
+
+    const [loading, setLoading] = useState(true);
+
+    const {
+
+        query,
+
+        setQuery,
+
+        filteredData,
+
+    } = useSearch(
+
+        customers,
+
+        (customer) =>
+
+            `${customer.name} ${customer.phone} ${customer.email ?? ""}`
+
+    );
+
+    async function handleDelete(id: number) {
+        const confirmed = window.confirm("Delete this customer?");
+
+        if (!confirmed) {
+            return;
+        }
+
+        try {
+            await deleteCustomer(id);
+            setCustomers((current) =>
+                current.filter((customer) => customer.id !== id)
+            );
+        } catch (error) {
+            console.error(error);
+            alert("Unable to delete customer.");
+        }
+    }
+
+    useEffect(() => {
+
+        let active = true;
+
+        getCustomers()
+            .then((data) => {
+                if (active) {
+                    setCustomers(data);
+                }
+            })
+            .catch((error) => {
+                console.error(error);
+            })
+            .finally(() => {
+                if (active) {
+                    setLoading(false);
+                }
+            });
+
+        return () => {
+            active = false;
+        };
+
+    }, []);
+
+    if (loading) {
+
+        return (
+            <DashboardLayout>
+                <p className="loading-state">Loading customers...</p>
+            </DashboardLayout>
+        );
+
+    }
+
     return (
+
+        <DashboardLayout>
+
         <main className="customers-page">
 
             <header className="customers-header">
 
-                <h1>Customers</h1>
+                <div>
+                    <p className="eyebrow">Client Directory</p>
+                    <h1>Customers</h1>
+                </div>
 
-                <button className="add-customer-btn">
-                    + Add Customer
-                </button>
+                <Link
+                    to="/customers/new"
+                    className="add-customer-btn"
+                >
+                    Add Customer
+                </Link>
 
             </header>
 
             <section className="customers-search">
 
                 <input
+
                     type="text"
+
                     placeholder="Search customers..."
+
+                    value={query}
+
+                    onChange={(event) =>
+
+                        setQuery(event.target.value)
+
+                    }
+
                 />
 
             </section>
@@ -32,9 +141,12 @@ function Customers() {
                         <tr>
 
                             <th>Name</th>
+
                             <th>Phone</th>
-                            <th>Device</th>
-                            <th>Status</th>
+
+                            <th>Email</th>
+
+                            <th>Action</th>
 
                         </tr>
 
@@ -42,23 +154,30 @@ function Customers() {
 
                     <tbody>
 
-                        <tr>
+                        {filteredData.map((customer) => (
 
-                            <td>John Doe</td>
-                            <td>08012345678</td>
-                            <td>iPhone 13</td>
-                            <td>In Progress</td>
+                            <tr key={customer.id}>
 
-                        </tr>
+                                <td>{customer.name}</td>
 
-                        <tr>
+                                <td>{customer.phone}</td>
 
-                            <td>Sarah James</td>
-                            <td>08198765432</td>
-                            <td>Samsung A55</td>
-                            <td>Completed</td>
+                                <td>{customer.email || "Not provided"}</td>
 
-                        </tr>
+                                <td>
+                                    <button
+                                        className="danger-button"
+                                        onClick={() =>
+                                            void handleDelete(customer.id)
+                                        }
+                                    >
+                                        Delete
+                                    </button>
+                                </td>
+
+                            </tr>
+
+                        ))}
 
                     </tbody>
 
@@ -67,7 +186,11 @@ function Customers() {
             </section>
 
         </main>
+
+        </DashboardLayout>
+
     );
+
 }
 
 export default Customers;
