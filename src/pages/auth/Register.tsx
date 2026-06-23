@@ -18,6 +18,7 @@ function Register() {
     const [password, setPassword] = useState("");
 
     const [loading, setLoading] = useState(false);
+    const [errorMessage, setErrorMessage] = useState("");
 
     async function handleSubmit(
         event: React.FormEvent<HTMLFormElement>
@@ -25,6 +26,7 @@ function Register() {
 
         event.preventDefault();
 
+        setErrorMessage("");
         setLoading(true);
 
         try {
@@ -43,7 +45,11 @@ function Register() {
 
             console.error(error);
 
-            alert("Registration failed.");
+            setErrorMessage(
+                error instanceof Error
+                    ? error.message
+                    : "Registration failed."
+            );
 
         } finally {
 
@@ -63,6 +69,16 @@ function Register() {
             >
 
                 <h1>Create Account</h1>
+
+                <p className="auth-subtitle">
+                    Start tracking repairs, customers, and inventory in minutes.
+                </p>
+
+                {errorMessage && (
+                    <p className="auth-error">
+                        {errorMessage}
+                    </p>
+                )}
 
                 <input
                     type="text"

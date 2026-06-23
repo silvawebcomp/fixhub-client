@@ -1,4 +1,8 @@
+import { useNavigate } from "react-router-dom";
+
 function Pricing() {
+  const navigate = useNavigate();
+
   return (
     <section className="pricing">
       <h2>Simple Pricing</h2>
@@ -8,7 +12,7 @@ function Pricing() {
         <h1>Free</h1>
         <p>Perfect for new repair businesses.</p>
 
-        <button>Start Free</button>
+        <button onClick={() => navigate("/register")}>Start Free</button>
       </div>
     </section>
   )

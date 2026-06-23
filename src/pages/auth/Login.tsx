@@ -17,6 +17,7 @@ function Login() {
     const [password, setPassword] = useState("");
 
     const [loading, setLoading] = useState(false);
+    const [errorMessage, setErrorMessage] = useState("");
 
     async function handleSubmit(
 
@@ -26,6 +27,7 @@ function Login() {
 
         event.preventDefault();
 
+        setErrorMessage("");
         setLoading(true);
 
         try {
@@ -45,7 +47,11 @@ navigate("/dashboard");
 
             console.error(error);
 
-            alert("Login failed.");
+            setErrorMessage(
+                error instanceof Error
+                    ? error.message
+                    : "Login failed."
+            );
 
         }
 
@@ -74,6 +80,16 @@ navigate("/dashboard");
                     Welcome Back
 
                 </h1>
+
+                <p className="auth-subtitle">
+                    Sign in to manage your repair desk.
+                </p>
+
+                {errorMessage && (
+                    <p className="auth-error">
+                        {errorMessage}
+                    </p>
+                )}
 
                 <input
 

@@ -9,7 +9,7 @@ function Testimonials() {
           Everything is now organized."
         </p>
 
-        <h4>— TechCare Solutions</h4>
+        <h4>TechCare Solutions</h4>
       </div>
 
       <div className="testimonial-card">
@@ -18,7 +18,7 @@ function Testimonials() {
           updates."
         </p>
 
-        <h4>— Mobile Doctor</h4>
+        <h4>Mobile Doctor</h4>
       </div>
     </section>
   )

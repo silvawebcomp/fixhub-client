@@ -3,6 +3,7 @@ import {
     Routes,
     Route,
 } from "react-router-dom";
+import "../pages/landing/Landing.css";
 
 import Hero from "../pages/landing/Hero";
 import Features from "../components/ui/Features";

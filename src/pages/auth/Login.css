@@ -42,8 +42,26 @@
 
     color: #1e293b;
 
-    margin-bottom: 10px;
+    margin: 0;
 
+}
+
+.auth-subtitle {
+    margin: -8px 0 4px;
+    color: #64748b;
+    line-height: 1.5;
+    text-align: center;
+}
+
+.auth-error {
+    margin: 0;
+    border: 1px solid #fecaca;
+    border-radius: 8px;
+    background: #fff5f5;
+    color: #b91c1c;
+    padding: 12px;
+    font-size: 14px;
+    line-height: 1.4;
 }
 
 .login-form input {

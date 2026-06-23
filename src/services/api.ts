@@ -1,4 +1,8 @@
-const API_BASE_URL = import.meta.env.VITE_API_URL ?? "http://localhost:5000/api";
+const API_BASE_URL =
+    import.meta.env.VITE_API_URL ??
+    (import.meta.env.PROD
+        ? "https://fixhub-server.vercel.app/api"
+        : "http://localhost:5000/api");
 
 type RequestOptions = RequestInit & {
     auth?: boolean;
@@ -15,14 +19,22 @@ export async function apiRequest<T>(
     const { auth = true, headers, ...requestOptions } = options;
     const token = getToken();
 
-    const response = await fetch(`${API_BASE_URL}${path}`, {
-        ...requestOptions,
-        headers: {
-            "Content-Type": "application/json",
-            ...(auth && token ? { Authorization: `Bearer ${token}` } : {}),
-            ...headers,
-        },
-    });
+    let response: Response;
+
+    try {
+        response = await fetch(`${API_BASE_URL}${path}`, {
+            ...requestOptions,
+            headers: {
+                "Content-Type": "application/json",
+                ...(auth && token ? { Authorization: `Bearer ${token}` } : {}),
+                ...headers,
+            },
+        });
+    } catch {
+        throw new Error(
+            "Unable to reach the FixHub API. Check that the backend is deployed and VITE_API_URL is set."
+        );
+    }
 
     const isJson = response.headers
         .get("content-type")
