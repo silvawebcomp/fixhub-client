@@ -20,6 +20,9 @@ function Hero() {
                 </button>
 
                 <div className="landing-nav-actions">
+                    <button onClick={() => navigate("/track")}>
+                        Track Repair
+                    </button>
                     <button onClick={() => navigate("/login")}>
                         Login
                     </button>
@@ -61,9 +64,9 @@ function Hero() {
 
                     <button
                         className="secondary"
-                        onClick={() => navigate("/login")}
+                        onClick={() => navigate("/track")}
                     >
-                        Login
+                        Track a Repair
                     </button>
 
                 </div>

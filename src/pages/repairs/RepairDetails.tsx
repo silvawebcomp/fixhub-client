@@ -47,6 +47,7 @@ function RepairDetails() {
     const [saving, setSaving] = useState(false);
     const [error, setError] = useState("");
     const [success, setSuccess] = useState("");
+    const [linkCopied, setLinkCopied] = useState(false);
 
     useEffect(() => {
         Promise.all([getRepair(repairId), getCustomers()])
@@ -106,6 +107,26 @@ function RepairDetails() {
                     ? requestError.message
                     : "Unable to delete repair."
             );
+        }
+    }
+
+    async function handleCopyTrackingLink() {
+        const ticketNumber = repair?.ticketNumber;
+
+        if (!ticketNumber) {
+            return;
+        }
+
+        const url = `${window.location.origin}/track?ticket=${encodeURIComponent(
+            ticketNumber
+        )}`;
+
+        try {
+            await navigator.clipboard.writeText(url);
+            setLinkCopied(true);
+            window.setTimeout(() => setLinkCopied(false), 2000);
+        } catch {
+            setError("Unable to copy the tracking link.");
         }
     }
 
@@ -173,6 +194,25 @@ function RepairDetails() {
                         <span>Technician</span>
                         <strong>{repair.assignedTechnician || "Unassigned"}</strong>
                     </div>
+                </section>
+
+                <section className="customer-tracking-share">
+                    <div>
+                        <span>Customer tracking</span>
+                        <strong>Share a secure progress link</strong>
+                        <p>
+                            The customer will verify with the phone number or email
+                            saved on this ticket.
+                        </p>
+                    </div>
+                    <button
+                        className="secondary-action"
+                        type="button"
+                        onClick={handleCopyTrackingLink}
+                        disabled={!repair.ticketNumber}
+                    >
+                        {linkCopied ? "Link copied" : "Copy tracking link"}
+                    </button>
                 </section>
 
                 {error && <p className="form-error">{error}</p>}

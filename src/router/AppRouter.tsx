@@ -14,6 +14,7 @@ import FAQ from "../components/ui/FAQ";
 
 import Login from "../pages/auth/Login";
 import Register from "../pages/auth/Register";
+import TrackRepair from "../pages/tracking/TrackRepair";
 
 import Dashboard from "../pages/dashboard/Dashboard";
 
@@ -74,6 +75,11 @@ function AppRouter() {
                 <Route
                     path="/register"
                     element={<Register />}
+                />
+
+                <Route
+                    path="/track"
+                    element={<TrackRepair />}
                 />
 
                 <Route
