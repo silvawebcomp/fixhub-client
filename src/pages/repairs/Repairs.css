@@ -16,6 +16,11 @@
     font-size: 30px;
 }
 
+.repairs-header p:not(.eyebrow) {
+    margin: 7px 0 0;
+    color: #64748b;
+}
+
 @media (max-width: 720px) {
     .repairs-header {
         align-items: stretch;

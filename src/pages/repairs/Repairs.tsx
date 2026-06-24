@@ -15,13 +15,17 @@ function Repairs() {
 
                 <div className="repairs-header">
 
-                    <h2>Repairs</h2>
+                    <div>
+                        <p className="eyebrow">Operations</p>
+                        <h2>Repair queue</h2>
+                        <p>Track every job from intake through collection.</p>
+                    </div>
 
                     <Link
                         to="/repairs/new"
                         className="new-repair-btn"
                     >
-                        + New Repair
+                        New repair
                     </Link>
 
                 </div>

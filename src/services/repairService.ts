@@ -1,68 +1,33 @@
-import type { Repair } from "../types/repair";
+import type { Repair, RepairPayload } from "../types/repair";
 import { apiRequest } from "./api";
 
 export async function getRepairs(): Promise<Repair[]> {
-
     return apiRequest<Repair[]>("/repairs");
-
 }
 
-export async function createRepair(
+export async function getRepair(id: number): Promise<Repair> {
+    return apiRequest<Repair>(`/repairs/${id}`);
+}
 
-    repair: {
-
-        customer: string;
-
-        device: string;
-
-        status: string;
-
-        notes?: string;
-
-    }
-
-): Promise<Repair> {
-
+export async function createRepair(repair: RepairPayload): Promise<Repair> {
     return apiRequest<Repair>("/repairs", {
         method: "POST",
         body: JSON.stringify(repair),
     });
-
 }
 
 export async function updateRepair(
-
     id: number,
-
-    repair: {
-
-        customer: string;
-
-        device: string;
-
-        status: string;
-
-        notes?: string;
-
-    }
-
+    repair: RepairPayload
 ): Promise<Repair> {
-
     return apiRequest<Repair>(`/repairs/${id}`, {
         method: "PUT",
         body: JSON.stringify(repair),
     });
-
 }
 
-export async function deleteRepair(
-
-    id: number
-
-): Promise<void> {
-
+export async function deleteRepair(id: number): Promise<void> {
     await apiRequest(`/repairs/${id}`, {
         method: "DELETE",
     });
-
 }

@@ -1,125 +1,90 @@
 import "./NewRepair.css";
 
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 
-import { createRepair } from "../../services/repairService";
 import DashboardLayout from "../../layouts/DashboardLayout";
+import { getCustomers } from "../../services/customerService";
+import { createRepair } from "../../services/repairService";
+import type { Customer } from "../../types/customer";
+import type { RepairPayload } from "../../types/repair";
+import RepairForm from "./RepairForm";
+
+const INITIAL_REPAIR: RepairPayload = {
+    customer: "",
+    customerPhone: "",
+    customerEmail: "",
+    device: "",
+    deviceBrand: "",
+    deviceModel: "",
+    serialNumber: "",
+    issue: "",
+    status: "Received",
+    priority: "Normal",
+    assignedTechnician: "",
+    estimatedCost: "",
+    finalCost: "",
+    dueDate: "",
+    notes: "",
+};
 
 function NewRepair() {
-
     const navigate = useNavigate();
-
-    const [customer, setCustomer] = useState("");
-
-    const [device, setDevice] = useState("");
-
-    const [status, setStatus] = useState("Pending");
-
+    const [values, setValues] = useState<RepairPayload>(INITIAL_REPAIR);
+    const [customers, setCustomers] = useState<Customer[]>([]);
     const [loading, setLoading] = useState(false);
+    const [error, setError] = useState("");
 
-    async function handleSubmit(
-        event: React.FormEvent<HTMLFormElement>
-    ) {
+    useEffect(() => {
+        getCustomers().then(setCustomers).catch(console.error);
+    }, []);
 
+    async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
         event.preventDefault();
-
         setLoading(true);
+        setError("");
 
         try {
-
-            await createRepair({
-                customer,
-                device,
-                status,
-                notes: "",
-            });
-
-            navigate("/repairs");
-
-        } catch (error) {
-
-            console.error(error);
-
-            alert("Unable to save repair.");
-
+            const repair = await createRepair(values);
+            navigate(`/repairs/${repair.id}`);
+        } catch (requestError) {
+            setError(
+                requestError instanceof Error
+                    ? requestError.message
+                    : "Unable to save repair."
+            );
         } finally {
-
             setLoading(false);
-
         }
-
     }
 
     return (
-
         <DashboardLayout>
+            <main className="repair-editor-page">
+                <header className="repair-editor-header">
+                    <div>
+                        <p className="eyebrow">Repair intake</p>
+                        <h1>New repair ticket</h1>
+                        <p>Capture the job once, then move it through the full workflow.</p>
+                    </div>
+                    <Link className="secondary-action" to="/repairs">
+                        Back to repairs
+                    </Link>
+                </header>
 
-            <main className="new-repair-page">
+                {error && <p className="form-error">{error}</p>}
 
-            <h1>New Repair</h1>
-
-            <form
-                className="repair-form"
-                onSubmit={handleSubmit}
-            >
-
-                <input
-                    type="text"
-                    placeholder="Customer Name"
-                    value={customer}
-                    onChange={(e) =>
-                        setCustomer(e.target.value)
-                    }
-                    required
+                <RepairForm
+                    values={values}
+                    customers={customers}
+                    loading={loading}
+                    submitLabel="Create repair ticket"
+                    onChange={setValues}
+                    onSubmit={handleSubmit}
                 />
-
-                <input
-                    type="text"
-                    placeholder="Device"
-                    value={device}
-                    onChange={(e) =>
-                        setDevice(e.target.value)
-                    }
-                    required
-                />
-
-                <select
-                    value={status}
-                    onChange={(e) =>
-                        setStatus(e.target.value)
-                    }
-                >
-
-                    <option>Pending</option>
-
-                    <option>In Progress</option>
-
-                    <option>Completed</option>
-
-                    <option>Waiting Parts</option>
-
-                </select>
-
-                <button
-                    type="submit"
-                    disabled={loading}
-                >
-
-                    {loading
-                        ? "Saving..."
-                        : "Save Repair"}
-
-                </button>
-
-            </form>
-
             </main>
-
         </DashboardLayout>
-
     );
-
 }
 
 export default NewRepair;

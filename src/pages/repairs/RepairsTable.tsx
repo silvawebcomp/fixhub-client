@@ -1,235 +1,222 @@
 import "./RepairsTable.css";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { Link } from "react-router-dom";
 
+import { getRepairs } from "../../services/repairService";
 import {
-    getRepairs,
-    deleteRepair,
-} from "../../services/repairService";
+    REPAIR_PRIORITIES,
+    REPAIR_STATUSES,
+    type Repair,
+} from "../../types/repair";
 
-import { useSearch } from "../../hooks/useSearch";
+const ACTIVE_STATUSES = REPAIR_STATUSES.filter(
+    (status) => !["Collected", "Cancelled"].includes(status)
+);
 
-import type { Repair } from "../../types/repair";
+function statusClass(status: string) {
+    return `status status-${status.toLowerCase().replaceAll(" ", "-")}`;
+}
 
 function RepairsTable() {
-
     const [repairs, setRepairs] = useState<Repair[]>([]);
-
     const [loading, setLoading] = useState(true);
-
-    async function loadRepairs() {
-
-        try {
-
-            const data = await getRepairs();
-
-            setRepairs(data);
-
-        } catch (error) {
-
-            console.error(error);
-
-        } finally {
-
-            setLoading(false);
-
-        }
-
-    }
+    const [error, setError] = useState("");
+    const [query, setQuery] = useState("");
+    const [statusFilter, setStatusFilter] = useState("All");
+    const [priorityFilter, setPriorityFilter] = useState("All");
 
     useEffect(() => {
-
-        let active = true;
-
         getRepairs()
-            .then((data) => {
-                if (active) {
-                    setRepairs(data);
-                }
+            .then(setRepairs)
+            .catch((requestError) => {
+                setError(
+                    requestError instanceof Error
+                        ? requestError.message
+                        : "Unable to load repairs."
+                );
             })
-            .catch((error) => {
-                console.error(error);
-            })
-            .finally(() => {
-                if (active) {
-                    setLoading(false);
-                }
-            });
-
-        return () => {
-            active = false;
-        };
-
+            .finally(() => setLoading(false));
     }, []);
 
-    const {
-
-        query,
-
-        setQuery,
-
-        filteredData,
-
-    } = useSearch(
-
-        repairs,
-
-        (repair) =>
-
-            `${repair.customer} ${repair.device} ${repair.status}`
-
+    const queueStats = useMemo(
+        () => ({
+            active: repairs.filter((repair) =>
+                ACTIVE_STATUSES.includes(repair.status)
+            ).length,
+            waiting: repairs.filter((repair) =>
+                ["Awaiting Approval", "Awaiting Parts"].includes(repair.status)
+            ).length,
+            ready: repairs.filter((repair) => repair.status === "Ready").length,
+            urgent: repairs.filter((repair) => repair.priority === "Urgent").length,
+        }),
+        [repairs]
     );
 
-    async function handleDelete(id: number) {
+    const filteredRepairs = useMemo(() => {
+        const normalizedQuery = query.trim().toLowerCase();
 
-        const confirmed = window.confirm(
+        return repairs.filter((repair) => {
+            const matchesQuery =
+                !normalizedQuery ||
+                [
+                    repair.ticketNumber,
+                    repair.customer,
+                    repair.customerPhone,
+                    repair.device,
+                    repair.deviceBrand,
+                    repair.deviceModel,
+                    repair.serialNumber,
+                    repair.issue,
+                    repair.assignedTechnician,
+                ]
+                    .filter(Boolean)
+                    .join(" ")
+                    .toLowerCase()
+                    .includes(normalizedQuery);
 
-            "Delete this repair?"
-
-        );
-
-        if (!confirmed) {
-
-            return;
-
-        }
-
-        try {
-
-            await deleteRepair(id);
-
-            await loadRepairs();
-
-        } catch (error) {
-
-            console.error(error);
-
-        }
-
-    }
+            return (
+                matchesQuery &&
+                (statusFilter === "All" || repair.status === statusFilter) &&
+                (priorityFilter === "All" || repair.priority === priorityFilter)
+            );
+        });
+    }, [priorityFilter, query, repairs, statusFilter]);
 
     if (loading) {
+        return <p className="loading-state">Loading repair queue...</p>;
+    }
 
-        return <p className="loading-state">Loading repairs...</p>;
-
+    if (error) {
+        return <p className="form-error">{error}</p>;
     }
 
     return (
-
         <>
-
-            <input
-
-                className="search-input"
-
-                type="text"
-
-                placeholder="Search repairs..."
-
-                value={query}
-
-                onChange={(event) =>
-
-                    setQuery(event.target.value)
-
-                }
-
-            />
-
-            {filteredData.length === 0 ? (
-
-                <p className="empty-state">No repairs found.</p>
-
-            ) : (
-
-            <section className="repairs-table">
-
-                <table>
-
-                    <thead>
-
-                        <tr>
-
-                            <th>Customer</th>
-
-                            <th>Device</th>
-
-                            <th>Status</th>
-
-                            <th>Date</th>
-
-                            <th>Action</th>
-
-                        </tr>
-
-                    </thead>
-
-                    <tbody>
-
-                        {filteredData.map((repair) => (
-
-                            <tr key={repair.id}>
-
-                                <td>{repair.customer}</td>
-
-                                <td>{repair.device}</td>
-
-                                <td>
-
-                                    <span className="status">
-
-                                        {repair.status}
-
-                                    </span>
-
-                                </td>
-
-                                <td>
-
-    {new Date(
-
-        repair.createdAt
-
-    ).toLocaleDateString()}
-
-</td>
-
-                                <td>
-
-                                    <button
-
-                                        className="delete-btn"
-
-                                        onClick={() =>
-
-                                            handleDelete(repair.id)
-
-                                        }
-
-                                    >
-
-                                        Delete
-
-                                    </button>
-
-                                </td>
-
-                            </tr>
-
-                        ))}
-
-                    </tbody>
-
-                </table>
-
+            <section className="queue-summary" aria-label="Repair queue summary">
+                <div>
+                    <span>Active</span>
+                    <strong>{queueStats.active}</strong>
+                </div>
+                <div>
+                    <span>Waiting</span>
+                    <strong>{queueStats.waiting}</strong>
+                </div>
+                <div>
+                    <span>Ready</span>
+                    <strong>{queueStats.ready}</strong>
+                </div>
+                <div>
+                    <span>Urgent</span>
+                    <strong>{queueStats.urgent}</strong>
+                </div>
             </section>
 
+            <section className="repair-filters">
+                <label className="filter-search">
+                    <span>Search</span>
+                    <input
+                        type="search"
+                        placeholder="Ticket, customer, device, issue..."
+                        value={query}
+                        onChange={(event) => setQuery(event.target.value)}
+                    />
+                </label>
+                <label>
+                    <span>Status</span>
+                    <select
+                        value={statusFilter}
+                        onChange={(event) => setStatusFilter(event.target.value)}
+                    >
+                        <option>All</option>
+                        {REPAIR_STATUSES.map((status) => (
+                            <option key={status}>{status}</option>
+                        ))}
+                    </select>
+                </label>
+                <label>
+                    <span>Priority</span>
+                    <select
+                        value={priorityFilter}
+                        onChange={(event) => setPriorityFilter(event.target.value)}
+                    >
+                        <option>All</option>
+                        {REPAIR_PRIORITIES.map((priority) => (
+                            <option key={priority}>{priority}</option>
+                        ))}
+                    </select>
+                </label>
+            </section>
+
+            {filteredRepairs.length === 0 ? (
+                <div className="empty-state">
+                    <p>No repair tickets match these filters.</p>
+                </div>
+            ) : (
+                <section className="repairs-table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Ticket</th>
+                                <th>Customer & device</th>
+                                <th>Status</th>
+                                <th>Priority</th>
+                                <th>Due</th>
+                                <th>Technician</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {filteredRepairs.map((repair) => (
+                                <tr key={repair.id}>
+                                    <td>
+                                        <Link
+                                            className="ticket-link"
+                                            to={`/repairs/${repair.id}`}
+                                        >
+                                            {repair.ticketNumber || `Repair #${repair.id}`}
+                                        </Link>
+                                        <small>
+                                            {new Date(
+                                                repair.createdAt
+                                            ).toLocaleDateString()}
+                                        </small>
+                                    </td>
+                                    <td>
+                                        <strong>{repair.customer}</strong>
+                                        <small>
+                                            {[repair.deviceBrand, repair.deviceModel]
+                                                .filter(Boolean)
+                                                .join(" ") || repair.device}
+                                        </small>
+                                    </td>
+                                    <td>
+                                        <span className={statusClass(repair.status)}>
+                                            {repair.status}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span
+                                            className={`priority priority-${repair.priority.toLowerCase()}`}
+                                        >
+                                            {repair.priority}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        {repair.dueDate
+                                            ? new Date(
+                                                  repair.dueDate
+                                              ).toLocaleDateString()
+                                            : "Not set"}
+                                    </td>
+                                    <td>{repair.assignedTechnician || "Unassigned"}</td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </section>
             )}
-
         </>
-
     );
-
 }
 
 export default RepairsTable;

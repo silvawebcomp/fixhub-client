@@ -19,6 +19,7 @@ import Dashboard from "../pages/dashboard/Dashboard";
 
 import Repairs from "../pages/repairs/Repairs";
 import NewRepair from "../pages/repairs/NewRepair";
+import RepairDetails from "../pages/repairs/RepairDetails";
 
 import Customers from "../pages/customers/Customers";
 import AddCustomer from "../pages/customers/AddCustomer";
@@ -98,6 +99,15 @@ function AppRouter() {
                     element={
                         <ProtectedRoute>
                             <NewRepair />
+                        </ProtectedRoute>
+                    }
+                />
+
+                <Route
+                    path="/repairs/:id"
+                    element={
+                        <ProtectedRoute>
+                            <RepairDetails />
                         </ProtectedRoute>
                     }
                 />
