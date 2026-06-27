@@ -16,6 +16,12 @@ import {
 
 } from "../../services/dashboardService";
 
+function money(value: number) {
+
+    return `NGN ${value.toLocaleString()}`;
+
+}
+
 function Dashboard() {
 
     const [
@@ -33,6 +39,14 @@ function Dashboard() {
         customers: 0,
 
         inventoryItems: 0,
+
+        totalInvoices: 0,
+
+        invoiceRevenue: 0,
+
+        paymentsReceived: 0,
+
+        outstandingBalance: 0,
 
     });
 
@@ -95,6 +109,22 @@ function Dashboard() {
                         title="Inventory"
 
                         value={stats.inventoryItems}
+
+                    />
+
+                    <StatCard
+
+                        title="Invoice Revenue"
+
+                        value={money(stats.invoiceRevenue)}
+
+                    />
+
+                    <StatCard
+
+                        title="Outstanding"
+
+                        value={money(stats.outstandingBalance)}
 
                     />
 

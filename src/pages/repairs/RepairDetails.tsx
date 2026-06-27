@@ -157,13 +157,19 @@ function RepairDetails() {
                         <p className="eyebrow">{repair.ticketNumber || `Repair #${repair.id}`}</p>
                         <h1>{repair.device}</h1>
                         <p>
-                            {repair.customer} · Opened{" "}
+                            {repair.customer} - Opened{" "}
                             {new Date(repair.createdAt).toLocaleDateString()}
                         </p>
                     </div>
                     <div className="header-actions">
                         <Link className="secondary-action" to="/repairs">
                             Back to repairs
+                        </Link>
+                        <Link
+                            className="secondary-action"
+                            to={`/invoices/new?repairId=${repair.id}`}
+                        >
+                            Create invoice
                         </Link>
                         <button className="danger-button" onClick={handleDelete}>
                             Delete

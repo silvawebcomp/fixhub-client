@@ -10,6 +10,14 @@ export interface DashboardStats {
 
     inventoryItems: number;
 
+    totalInvoices: number;
+
+    invoiceRevenue: number;
+
+    paymentsReceived: number;
+
+    outstandingBalance: number;
+
 }
 
 export async function getDashboardStats(): Promise<DashboardStats> {

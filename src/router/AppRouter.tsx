@@ -3,6 +3,7 @@ import {
     Routes,
     Route,
 } from "react-router-dom";
+
 import "../pages/landing/Landing.css";
 
 import Hero from "../pages/landing/Hero";
@@ -14,6 +15,7 @@ import FAQ from "../components/ui/FAQ";
 
 import Login from "../pages/auth/Login";
 import Register from "../pages/auth/Register";
+
 import TrackRepair from "../pages/tracking/TrackRepair";
 
 import Dashboard from "../pages/dashboard/Dashboard";
@@ -28,38 +30,28 @@ import AddCustomer from "../pages/customers/AddCustomer";
 import Inventory from "../pages/inventory/Inventory";
 import AddInventory from "../pages/inventory/AddInventory";
 
+import InvoiceList from "../pages/invoices/InvoiceList";
+import CreateInvoice from "../pages/invoices/CreateInvoice";
+import InvoiceDetails from "../pages/invoices/InvoiceDetails";
+
 import ProtectedRoute from "../components/auth/ProtectedRoute";
 
 function LandingPage() {
-
     return (
-
         <>
-
             <Hero />
-
             <Features />
-
             <Stats />
-
             <Testimonials />
-
             <Pricing />
-
             <FAQ />
-
         </>
-
     );
-
 }
 
 function AppRouter() {
-
     return (
-
         <BrowserRouter>
-
             <Routes>
 
                 <Route
@@ -154,12 +146,36 @@ function AppRouter() {
                     }
                 />
 
+                <Route
+                    path="/invoices"
+                    element={
+                        <ProtectedRoute>
+                            <InvoiceList />
+                        </ProtectedRoute>
+                    }
+                />
+
+                <Route
+                    path="/invoices/new"
+                    element={
+                        <ProtectedRoute>
+                            <CreateInvoice />
+                        </ProtectedRoute>
+                    }
+                />
+
+                <Route
+                    path="/invoices/:id"
+                    element={
+                        <ProtectedRoute>
+                            <InvoiceDetails />
+                        </ProtectedRoute>
+                    }
+                />
+
             </Routes>
-
         </BrowserRouter>
-
     );
-
 }
 
 export default AppRouter;

@@ -1,0 +1,202 @@
+.invoice-form-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 340px;
+    align-items: start;
+    gap: 18px;
+}
+
+.invoice-form-panel,
+.invoice-summary-panel {
+    border: 1px solid #dbe3ee;
+    border-radius: 8px;
+    background: #ffffff;
+    box-shadow: 0 16px 34px rgba(15, 23, 42, 0.06);
+}
+
+.invoice-form-panel {
+    display: grid;
+    gap: 18px;
+    padding: 22px;
+}
+
+.invoice-summary-panel {
+    position: sticky;
+    top: 20px;
+    padding: 20px;
+}
+
+.invoice-section-heading {
+    display: grid;
+    gap: 4px;
+}
+
+.invoice-section-heading h3,
+.invoice-summary-panel h3 {
+    margin: 0;
+    color: #172033;
+    font-size: 18px;
+}
+
+.invoice-section-heading p {
+    margin: 0;
+    color: #64748b;
+    line-height: 1.5;
+}
+
+.invoice-form-panel label {
+    display: grid;
+    gap: 8px;
+    color: #334155;
+    font-size: 13px;
+    font-weight: 800;
+}
+
+.invoice-form-panel input,
+.invoice-form-panel select,
+.invoice-form-panel textarea {
+    width: 100%;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    background: #ffffff;
+    color: #111827;
+    font: inherit;
+    font-weight: 500;
+    outline: none;
+    padding: 13px 14px;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.invoice-form-panel input:focus,
+.invoice-form-panel select:focus,
+.invoice-form-panel textarea:focus {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.14);
+}
+
+.selected-repair-card {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px 14px;
+    border: 1px solid #bfdbfe;
+    border-radius: 8px;
+    background: #eff6ff;
+    color: #334155;
+    padding: 14px;
+}
+
+.selected-repair-card strong {
+    grid-column: 1 / -1;
+    color: #172033;
+}
+
+.line-items {
+    display: grid;
+    gap: 12px;
+}
+
+.line-item-row {
+    display: grid;
+    grid-template-columns: minmax(220px, 1fr) 90px 150px auto;
+    align-items: end;
+    gap: 12px;
+    border: 1px solid #edf2f7;
+    border-radius: 8px;
+    background: #f8fafc;
+    padding: 12px;
+}
+
+.icon-text-button,
+.secondary-invoice-btn,
+.new-invoice-btn {
+    min-height: 46px;
+    border: 0;
+    border-radius: 8px;
+    cursor: pointer;
+    font: inherit;
+    font-weight: 900;
+    text-decoration: none;
+}
+
+.icon-text-button {
+    border: 1px solid #dbe3ee;
+    background: #ffffff;
+    color: #475569;
+    padding: 0 14px;
+}
+
+.icon-text-button:disabled {
+    cursor: not-allowed;
+    opacity: 0.45;
+}
+
+.secondary-invoice-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #cbd5e1;
+    background: #ffffff;
+    color: #172033;
+    padding: 0 18px;
+}
+
+.invoice-two-columns {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+}
+
+.invoice-summary-panel dl {
+    display: grid;
+    gap: 0;
+    margin: 18px 0;
+}
+
+.invoice-summary-panel dl > div {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    border-bottom: 1px solid #edf2f7;
+    padding: 11px 0;
+}
+
+.invoice-summary-panel dt {
+    color: #64748b;
+    font-weight: 800;
+}
+
+.invoice-summary-panel dd {
+    margin: 0;
+    color: #172033;
+    font-weight: 900;
+}
+
+.summary-total dt,
+.summary-total dd,
+.summary-balance dt,
+.summary-balance dd {
+    color: #0f172a;
+    font-size: 18px;
+}
+
+.summary-balance dd {
+    color: #2563eb;
+}
+
+@media (max-width: 1080px) {
+    .invoice-form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .invoice-summary-panel {
+        position: static;
+        grid-row: 1;
+    }
+}
+
+@media (max-width: 780px) {
+    .line-item-row,
+    .invoice-two-columns,
+    .selected-repair-card {
+        grid-template-columns: 1fr;
+    }
+}

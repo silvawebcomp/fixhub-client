@@ -27,6 +27,10 @@ function Sidebar() {
                     Inventory
                 </NavLink>
 
+                <NavLink to="/invoices">
+                    Invoices
+                </NavLink>
+
             </nav>
 
         </aside>
