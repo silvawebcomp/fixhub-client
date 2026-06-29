@@ -1,0 +1,133 @@
+.communications-page {
+    display: grid;
+    gap: 22px;
+    width: 100%;
+}
+
+.communications-header {
+    display: flex;
+    justify-content: space-between;
+    gap: 18px;
+}
+
+.communications-header h2 {
+    margin: 4px 0 8px;
+    color: #172033;
+    font-size: clamp(28px, 4vw, 42px);
+    line-height: 1.05;
+}
+
+.communications-header p {
+    margin: 0;
+    color: #64748b;
+}
+
+.communication-metrics {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 14px;
+}
+
+.communication-metrics > div {
+    display: grid;
+    gap: 8px;
+    border: 1px solid #dbe3ee;
+    border-radius: 8px;
+    background: #ffffff;
+    padding: 18px;
+    box-shadow: 0 12px 26px rgba(15, 23, 42, 0.05);
+}
+
+.communication-metrics span {
+    color: #64748b;
+    font-size: 12px;
+    font-weight: 900;
+    text-transform: uppercase;
+}
+
+.communication-metrics strong {
+    color: #172033;
+    font-size: 32px;
+}
+
+.communications-table {
+    overflow-x: auto;
+    border: 1px solid #dbe3ee;
+    border-radius: 8px;
+    background: #ffffff;
+    box-shadow: 0 16px 34px rgba(15, 23, 42, 0.06);
+}
+
+.communications-table table {
+    width: 100%;
+    min-width: 900px;
+    border-collapse: collapse;
+}
+
+.communications-table th,
+.communications-table td {
+    border-bottom: 1px solid #edf2f7;
+    padding: 16px;
+    text-align: left;
+    vertical-align: top;
+}
+
+.communications-table th {
+    background: #f8fafc;
+    color: #64748b;
+    font-size: 12px;
+    font-weight: 900;
+    text-transform: uppercase;
+}
+
+.communications-table td {
+    color: #172033;
+    font-weight: 700;
+}
+
+.communications-table tr:last-child td {
+    border-bottom: 0;
+}
+
+.communications-table a {
+    display: block;
+    color: #2563eb;
+    font-weight: 900;
+    text-decoration: none;
+}
+
+.communications-table small {
+    display: block;
+    margin-top: 5px;
+    color: #64748b;
+}
+
+.communications-table p {
+    display: -webkit-box;
+    max-width: 520px;
+    margin: 6px 0 0;
+    overflow: hidden;
+    color: #64748b;
+    font-weight: 500;
+    line-height: 1.45;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+}
+
+.channel-pill {
+    display: inline-flex;
+    align-items: center;
+    min-height: 28px;
+    border-radius: 999px;
+    background: #eff6ff;
+    color: #1d4ed8;
+    font-size: 12px;
+    font-weight: 900;
+    padding: 0 10px;
+}
+
+@media (max-width: 760px) {
+    .communication-metrics {
+        grid-template-columns: 1fr;
+    }
+}

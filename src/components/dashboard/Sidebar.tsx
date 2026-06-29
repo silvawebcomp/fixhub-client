@@ -31,6 +31,10 @@ function Sidebar() {
                     Invoices
                 </NavLink>
 
+                <NavLink to="/communications">
+                    Communications
+                </NavLink>
+
             </nav>
 
         </aside>

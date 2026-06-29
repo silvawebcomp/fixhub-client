@@ -34,6 +34,8 @@ import InvoiceList from "../pages/invoices/InvoiceList";
 import CreateInvoice from "../pages/invoices/CreateInvoice";
 import InvoiceDetails from "../pages/invoices/InvoiceDetails";
 
+import Communications from "../pages/communications/Communications";
+
 import ProtectedRoute from "../components/auth/ProtectedRoute";
 
 function LandingPage() {
@@ -169,6 +171,15 @@ function AppRouter() {
                     element={
                         <ProtectedRoute>
                             <InvoiceDetails />
+                        </ProtectedRoute>
+                    }
+                />
+
+                <Route
+                    path="/communications"
+                    element={
+                        <ProtectedRoute>
+                            <Communications />
                         </ProtectedRoute>
                     }
                 />

@@ -13,6 +13,7 @@ import {
 } from "../../services/repairService";
 import type { Customer } from "../../types/customer";
 import type { Repair, RepairPayload } from "../../types/repair";
+import RepairCommunicationPanel from "./RepairCommunicationPanel";
 import RepairForm from "./RepairForm";
 
 function toFormValues(repair: Repair): RepairPayload {
@@ -235,25 +236,29 @@ function RepairDetails() {
                         onSubmit={handleSubmit}
                     />
 
-                    <aside className="status-timeline">
-                        <div className="form-section-heading">
-                            <h2>Status timeline</h2>
-                            <p>Every workflow change is recorded here.</p>
-                        </div>
-                        <ol>
-                            {repair.statusHistory?.map((entry) => (
-                                <li key={entry.id}>
-                                    <span className="timeline-marker" />
-                                    <div>
-                                        <strong>{entry.status}</strong>
-                                        <time>
-                                            {new Date(entry.createdAt).toLocaleString()}
-                                        </time>
-                                        {entry.note && <p>{entry.note}</p>}
-                                    </div>
-                                </li>
-                            ))}
-                        </ol>
+                    <aside className="repair-side-column">
+                        <section className="status-timeline">
+                            <div className="form-section-heading">
+                                <h2>Status timeline</h2>
+                                <p>Every workflow change is recorded here.</p>
+                            </div>
+                            <ol>
+                                {repair.statusHistory?.map((entry) => (
+                                    <li key={entry.id}>
+                                        <span className="timeline-marker" />
+                                        <div>
+                                            <strong>{entry.status}</strong>
+                                            <time>
+                                                {new Date(entry.createdAt).toLocaleString()}
+                                            </time>
+                                            {entry.note && <p>{entry.note}</p>}
+                                        </div>
+                                    </li>
+                                ))}
+                            </ol>
+                        </section>
+
+                        <RepairCommunicationPanel repair={repair} />
                     </aside>
                 </div>
             </main>

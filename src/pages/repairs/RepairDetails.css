@@ -26,8 +26,15 @@
 
 .repair-detail-grid {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) 320px;
+    grid-template-columns: minmax(0, 1fr) 360px;
     align-items: start;
+    gap: 18px;
+}
+
+.repair-side-column {
+    position: sticky;
+    top: 20px;
+    display: grid;
     gap: 18px;
 }
 
@@ -66,8 +73,6 @@
 }
 
 .status-timeline {
-    position: sticky;
-    top: 20px;
     border: 1px solid #e2e8f0;
     border-radius: 8px;
     background: #ffffff;
@@ -133,7 +138,7 @@
         grid-template-columns: 1fr;
     }
 
-    .status-timeline {
+    .repair-side-column {
         position: static;
         grid-row: 1;
     }
