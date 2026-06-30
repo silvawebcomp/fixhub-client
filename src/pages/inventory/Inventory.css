@@ -1,45 +1,54 @@
 .inventory-page {
     display: grid;
-    gap: 18px;
+    gap: 20px;
 }
 
-.summary-strip {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 12px;
-}
-
-.summary-strip div {
-    border: 1px solid #e5e7eb;
-    border-radius: 8px;
-    background: #ffffff;
-    padding: 16px;
-}
-
-.summary-strip span {
-    display: block;
+.inventory-page .page-header p {
+    margin: 8px 0 0;
     color: #64748b;
-    font-size: 13px;
-    font-weight: 800;
 }
 
-.summary-strip strong {
-    display: block;
-    margin-top: 8px;
-    color: #111827;
-    font-size: 24px;
+.inventory-summary-strip {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
+.inventory-toolbar {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 220px;
+    gap: 14px;
+}
+
+.low-stock-callout {
+    display: grid;
+    gap: 4px;
+    border: 1px solid #fed7aa;
+    border-radius: 8px;
+    background: #fff7ed;
+    padding: 13px 16px;
+}
+
+.low-stock-callout span {
+    color: #9a3412;
+    font-size: 12px;
+    font-weight: 900;
+    text-transform: uppercase;
+}
+
+.low-stock-callout strong {
+    color: #172033;
 }
 
 .inventory-table {
     overflow: auto;
-    border: 1px solid #e5e7eb;
+    border: 1px solid #dbe3ee;
     border-radius: 8px;
     background: #ffffff;
+    box-shadow: 0 16px 34px rgba(15, 23, 42, 0.06);
 }
 
 .inventory-table table {
     width: 100%;
-    min-width: 760px;
+    min-width: 1180px;
     border-collapse: collapse;
 }
 
@@ -48,6 +57,7 @@
     border-bottom: 1px solid #eef2f7;
     padding: 14px 16px;
     text-align: left;
+    vertical-align: top;
 }
 
 .inventory-table th {
@@ -58,8 +68,145 @@
     text-transform: uppercase;
 }
 
+.inventory-table td {
+    color: #172033;
+    font-weight: 700;
+}
+
+.inventory-table td small {
+    display: block;
+    margin-top: 5px;
+    color: #64748b;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.stock-warning {
+    display: inline-flex;
+    align-items: center;
+    min-height: 24px;
+    margin-left: 8px;
+    border-radius: 999px;
+    background: #fee2e2;
+    color: #b91c1c;
+    font-size: 11px;
+    font-weight: 900;
+    padding: 0 8px;
+}
+
+.inventory-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.stock-modal-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 20;
+    display: grid;
+    place-items: center;
+    background: rgba(15, 23, 42, 0.48);
+    padding: 20px;
+}
+
+.stock-modal {
+    display: grid;
+    gap: 18px;
+    width: min(100%, 620px);
+    max-height: calc(100vh - 40px);
+    overflow: auto;
+    border-radius: 8px;
+    background: #ffffff;
+    padding: 22px;
+    box-shadow: 0 24px 70px rgba(15, 23, 42, 0.25);
+}
+
+.stock-modal header {
+    display: flex;
+    justify-content: space-between;
+    gap: 14px;
+}
+
+.stock-modal h2,
+.stock-modal p,
+.movement-history h3,
+.movement-history p {
+    margin: 0;
+}
+
+.stock-modal h2 {
+    color: #172033;
+}
+
+.stock-modal form {
+    display: grid;
+    gap: 14px;
+}
+
+.stock-modal label {
+    display: grid;
+    gap: 7px;
+    color: #334155;
+    font-size: 13px;
+    font-weight: 800;
+}
+
+.stock-modal input,
+.stock-modal select,
+.stock-modal textarea {
+    width: 100%;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    color: #111827;
+    font: inherit;
+    padding: 12px;
+}
+
+.movement-history {
+    display: grid;
+    gap: 12px;
+    border-top: 1px solid #edf2f7;
+    padding-top: 14px;
+}
+
+.movement-history ol {
+    display: grid;
+    gap: 10px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.movement-history li {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 5px 12px;
+    border: 1px solid #edf2f7;
+    border-radius: 8px;
+    background: #f8fafc;
+    padding: 11px;
+}
+
+.movement-history time {
+    grid-column: 1 / -1;
+    color: #64748b;
+    font-size: 12px;
+}
+
+@media (max-width: 1080px) {
+    .inventory-summary-strip {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
 @media (max-width: 720px) {
-    .summary-strip {
+    .inventory-summary-strip,
+    .inventory-toolbar {
         grid-template-columns: 1fr;
+    }
+
+    .stock-modal header,
+    .inventory-actions {
+        flex-direction: column;
     }
 }
