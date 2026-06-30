@@ -35,6 +35,7 @@ import CreateInvoice from "../pages/invoices/CreateInvoice";
 import InvoiceDetails from "../pages/invoices/InvoiceDetails";
 
 import Communications from "../pages/communications/Communications";
+import Analytics from "../pages/analytics/Analytics";
 
 import ProtectedRoute from "../components/auth/ProtectedRoute";
 
@@ -180,6 +181,15 @@ function AppRouter() {
                     element={
                         <ProtectedRoute>
                             <Communications />
+                        </ProtectedRoute>
+                    }
+                />
+
+                <Route
+                    path="/analytics"
+                    element={
+                        <ProtectedRoute>
+                            <Analytics />
                         </ProtectedRoute>
                     }
                 />

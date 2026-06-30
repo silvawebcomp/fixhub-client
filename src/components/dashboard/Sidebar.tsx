@@ -35,6 +35,10 @@ function Sidebar() {
                     Communications
                 </NavLink>
 
+                <NavLink to="/analytics">
+                    Insights
+                </NavLink>
+
             </nav>
 
         </aside>

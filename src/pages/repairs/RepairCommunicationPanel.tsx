@@ -115,9 +115,17 @@ function RepairCommunicationPanel({ repair }: CommunicationPanelProps) {
 
             if (status === "Sent") {
                 window.open(channelUrl(channel, recipient, subject, message), "_blank", "noopener,noreferrer");
-                setSuccess(`${channel} message opened and logged.`);
+                setSuccess(
+                    log.persisted === false
+                        ? `${channel} opened. Run the database migration to save communication history.`
+                        : `${channel} message opened and logged.`
+                );
             } else {
-                setSuccess("Message saved to the communication log.");
+                setSuccess(
+                    log.persisted === false
+                        ? "Draft prepared. Run the database migration to save communication history."
+                        : "Message saved to the communication log."
+                );
             }
         } catch (requestError) {
             setError(

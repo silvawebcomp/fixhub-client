@@ -27,6 +27,7 @@ export type NotificationLog = {
     status: NotificationStatus;
     createdAt: string;
     launchUrl?: string;
+    persisted?: boolean;
     repair?: {
         id: number;
         customer: string;
