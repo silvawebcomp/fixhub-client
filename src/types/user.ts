@@ -6,6 +6,8 @@ export interface User {
 
     email: string;
 
+    role?: "Owner" | "Admin" | "Technician" | "Front Desk";
+
     token?: string;
 
 }

@@ -39,6 +39,10 @@ function Sidebar() {
                     Insights
                 </NavLink>
 
+                <NavLink to="/team">
+                    Team
+                </NavLink>
+
             </nav>
 
         </aside>
