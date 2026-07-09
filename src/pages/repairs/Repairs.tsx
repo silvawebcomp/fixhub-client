@@ -2,10 +2,16 @@ import "./Repairs.css";
 
 import DashboardLayout from "../../layouts/DashboardLayout";
 import RepairsTable from "./RepairsTable";
+import { useRepairs } from "../../hooks/useRepairs";
 
 import { Link } from "react-router-dom";
 
 function Repairs() {
+    const {
+        data: repairs = [],
+        isLoading,
+        error,
+    } = useRepairs();
 
     return (
 
@@ -30,7 +36,19 @@ function Repairs() {
 
                 </div>
 
-                <RepairsTable />
+                {isLoading ? (
+                    <p className="loading-state">
+                        Loading repair queue...
+                    </p>
+                ) : error ? (
+                    <p className="form-error">
+                        Unable to load repairs.
+                    </p>
+                ) : (
+                    <RepairsTable
+                        repairs={repairs}
+                    />
+                )}
 
             </main>
 
@@ -41,3 +59,4 @@ function Repairs() {
 }
 
 export default Repairs;
+
