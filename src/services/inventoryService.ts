@@ -6,12 +6,16 @@ import type {
 } from "../types/inventory";
 import { apiRequest } from "./api";
 
-export async function getInventory() {
-    return apiRequest<InventoryItem[]>("/inventory");
+function branchQuery(branchId?: string) {
+    return branchId ? `?branchId=${encodeURIComponent(branchId)}` : "";
 }
 
-export async function getInventorySummary() {
-    return apiRequest<InventorySummary>("/inventory/summary");
+export async function getInventory(branchId?: string) {
+    return apiRequest<InventoryItem[]>(`/inventory${branchQuery(branchId)}`);
+}
+
+export async function getInventorySummary(branchId?: string) {
+    return apiRequest<InventorySummary>(`/inventory/summary${branchQuery(branchId)}`);
 }
 
 export async function createInventoryItem(item: InventoryPayload) {

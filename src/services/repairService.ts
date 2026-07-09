@@ -1,8 +1,12 @@
 import type { Repair, RepairPayload } from "../types/repair";
 import { apiRequest } from "./api";
 
-export async function getRepairs(): Promise<Repair[]> {
-    return apiRequest<Repair[]>("/repairs");
+function branchQuery(branchId?: string) {
+    return branchId ? `?branchId=${encodeURIComponent(branchId)}` : "";
+}
+
+export async function getRepairs(branchId?: string): Promise<Repair[]> {
+    return apiRequest<Repair[]>(`/repairs${branchQuery(branchId)}`);
 }
 
 export async function getRepair(id: number): Promise<Repair> {

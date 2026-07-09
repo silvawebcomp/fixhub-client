@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 
 import DashboardLayout from "../../layouts/DashboardLayout";
+import { getBranches } from "../../services/branchService";
 import {
     adjustInventoryItem,
     deleteInventoryItem,
@@ -11,6 +12,7 @@ import {
     getInventorySummary,
 } from "../../services/inventoryService";
 import { useSearch } from "../../hooks/useSearch";
+import type { Branch } from "../../types/branch";
 import type {
     InventoryItem,
     InventorySummary,
@@ -38,6 +40,8 @@ function money(value: number) {
 
 function Inventory() {
     const [items, setItems] = useState<InventoryItem[]>([]);
+    const [branches, setBranches] = useState<Branch[]>([]);
+    const [branchId, setBranchId] = useState("");
     const [summary, setSummary] = useState<InventorySummary>(EMPTY_SUMMARY);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
@@ -52,7 +56,7 @@ function Inventory() {
         (item) =>
             `${item.name} ${item.sku ?? ""} ${item.category ?? ""} ${
                 item.supplier ?? ""
-            } ${item.location ?? ""}`
+            } ${item.location ?? ""} ${item.branch?.name ?? ""}`
     );
 
     const lowStockItems = useMemo(
@@ -60,14 +64,14 @@ function Inventory() {
         [filteredData]
     );
 
-    async function loadInventory() {
+    async function loadInventory(nextBranchId = branchId) {
         setLoading(true);
         setError("");
 
         try {
             const [inventoryData, summaryData] = await Promise.all([
-                getInventory(),
-                getInventorySummary(),
+                getInventory(nextBranchId),
+                getInventorySummary(nextBranchId),
             ]);
 
             setItems(inventoryData);
@@ -86,12 +90,17 @@ function Inventory() {
     useEffect(() => {
         let active = true;
 
-        Promise.all([getInventory(), getInventorySummary()])
-            .then(([inventoryData, summaryData]) => {
+        Promise.all([
+            getBranches(),
+            getInventory(branchId),
+            getInventorySummary(branchId),
+        ])
+            .then(([branchData, inventoryData, summaryData]) => {
                 if (!active) {
                     return;
                 }
 
+                setBranches(branchData);
                 setItems(inventoryData);
                 setSummary(summaryData);
             })
@@ -115,7 +124,7 @@ function Inventory() {
         return () => {
             active = false;
         };
-    }, []);
+    }, [branchId]);
 
     async function handleDelete(id: number) {
         const confirmed = window.confirm("Delete this inventory item?");
@@ -175,7 +184,7 @@ function Inventory() {
                     <div>
                         <p className="eyebrow">Stock Control</p>
                         <h1>Inventory</h1>
-                        <p>Track parts, suppliers, reorder levels, and stock movements.</p>
+                        <p>Track parts, suppliers, reorder levels, stock movements, and branches.</p>
                     </div>
 
                     <Link to="/inventory/new" className="primary-action">
@@ -210,10 +219,24 @@ function Inventory() {
                     <input
                         className="search-input"
                         type="text"
-                        placeholder="Search by item, SKU, category, supplier, or location..."
+                        placeholder="Search by item, branch, SKU, category, supplier, or location..."
                         value={query}
                         onChange={(event) => setQuery(event.target.value)}
                     />
+                    <label className="branch-select-inline">
+                        <span>Branch</span>
+                        <select
+                            value={branchId}
+                            onChange={(event) => setBranchId(event.target.value)}
+                        >
+                            <option value="">All branches</option>
+                            {branches.map((branch) => (
+                                <option key={branch.id} value={branch.id}>
+                                    {branch.name}
+                                </option>
+                            ))}
+                        </select>
+                    </label>
                     <div className="low-stock-callout">
                         <span>Needs attention</span>
                         <strong>{lowStockItems.length} item(s)</strong>
@@ -232,6 +255,7 @@ function Inventory() {
                             <thead>
                                 <tr>
                                     <th>Item</th>
+                                    <th>Branch</th>
                                     <th>SKU</th>
                                     <th>Category</th>
                                     <th>Supplier</th>
@@ -256,6 +280,7 @@ function Inventory() {
                                                     </span>
                                                 )}
                                             </td>
+                                            <td>{item.branch?.name ?? "Default"}</td>
                                             <td>{item.sku || "-"}</td>
                                             <td>{item.category || "-"}</td>
                                             <td>{item.supplier || "-"}</td>
@@ -299,7 +324,9 @@ function Inventory() {
                                 <div>
                                     <p className="eyebrow">Stock movement</p>
                                     <h2>{activeItem.name}</h2>
-                                    <p>Current stock: {activeItem.quantity}</p>
+                                    <p>
+                                        {activeItem.branch?.name ?? "Default branch"} - Current stock: {activeItem.quantity}
+                                    </p>
                                 </div>
                                 <button
                                     type="button"

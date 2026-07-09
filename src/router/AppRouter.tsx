@@ -37,6 +37,7 @@ import InvoiceDetails from "../pages/invoices/InvoiceDetails";
 import Communications from "../pages/communications/Communications";
 import Analytics from "../pages/analytics/Analytics";
 import Team from "../pages/team/Team";
+import Branches from "../pages/branches/Branches";
 
 import ProtectedRoute from "../components/auth/ProtectedRoute";
 
@@ -194,7 +195,14 @@ function AppRouter() {
                         </ProtectedRoute>
                     }
                 />
-
+                <Route
+                    path="/branches"
+                    element={
+                        <ProtectedRoute>
+                            <Branches />
+                        </ProtectedRoute>
+                    }
+                />
                 <Route
                     path="/team"
                     element={
@@ -210,3 +218,7 @@ function AppRouter() {
 }
 
 export default AppRouter;
+
+
+
+

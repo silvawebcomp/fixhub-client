@@ -39,6 +39,10 @@ function Sidebar() {
                     Insights
                 </NavLink>
 
+                <NavLink to="/branches">
+                    Branches
+                </NavLink>
+
                 <NavLink to="/team">
                     Team
                 </NavLink>
@@ -50,3 +54,5 @@ function Sidebar() {
 }
 
 export default Sidebar;
+
+

@@ -1,3 +1,4 @@
+import type { Branch } from "../../types/branch";
 import type { Customer } from "../../types/customer";
 import {
     REPAIR_PRIORITIES,
@@ -8,6 +9,7 @@ import {
 type RepairFormProps = {
     values: RepairPayload;
     customers: Customer[];
+    branches: Branch[];
     loading: boolean;
     submitLabel: string;
     showStatusNote?: boolean;
@@ -18,6 +20,7 @@ type RepairFormProps = {
 function RepairForm({
     values,
     customers,
+    branches,
     loading,
     submitLabel,
     showStatusNote = false,
@@ -156,9 +159,25 @@ function RepairForm({
             <section className="form-section">
                 <div className="form-section-heading">
                     <h2>Workflow</h2>
-                    <p>Set ownership, urgency, timing, and commercial details.</p>
+                    <p>Set branch, ownership, urgency, timing, and commercial details.</p>
                 </div>
                 <div className="form-grid">
+                    <label className="field">
+                        <span>Branch</span>
+                        <select
+                            value={values.branchId}
+                            onChange={(event) =>
+                                setField("branchId", event.target.value)
+                            }
+                        >
+                            <option value="">Default branch</option>
+                            {branches.map((branch) => (
+                                <option key={branch.id} value={branch.id}>
+                                    {branch.name}
+                                </option>
+                            ))}
+                        </select>
+                    </label>
                     <label className="field">
                         <span>Status</span>
                         <select

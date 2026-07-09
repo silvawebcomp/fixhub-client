@@ -1,7 +1,17 @@
 import axiosClient from "./axiosClient";
 
-export async function getRepairs() {
-    const response = await axiosClient.get("/repairs");
+function branchParams(branchId?: string) {
+    return branchId
+        ? {
+              branchId,
+          }
+        : undefined;
+}
+
+export async function getRepairs(branchId?: string) {
+    const response = await axiosClient.get("/repairs", {
+        params: branchParams(branchId),
+    });
     return response.data;
 }
 

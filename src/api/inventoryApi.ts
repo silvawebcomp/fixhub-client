@@ -1,12 +1,24 @@
 import axiosClient from "./axiosClient";
 
-export async function getInventory() {
-    const response = await axiosClient.get("/inventory");
+function branchParams(branchId?: string) {
+    return branchId
+        ? {
+              branchId,
+          }
+        : undefined;
+}
+
+export async function getInventory(branchId?: string) {
+    const response = await axiosClient.get("/inventory", {
+        params: branchParams(branchId),
+    });
     return response.data;
 }
 
-export async function getInventorySummary() {
-    const response = await axiosClient.get("/inventory/summary");
+export async function getInventorySummary(branchId?: string) {
+    const response = await axiosClient.get("/inventory/summary", {
+        params: branchParams(branchId),
+    });
     return response.data;
 }
 
@@ -35,7 +47,7 @@ export async function adjustInventoryItem(
     id: number,
     data: unknown
 ) {
-    const response = await axiosClient.patch(
+    const response = await axiosClient.post(
         `/inventory/${id}/adjust`,
         data
     );
@@ -50,3 +62,4 @@ export async function deleteInventoryItem(id: number) {
 
     return response.data;
 }
+

@@ -72,6 +72,7 @@ function RepairsTable({
                     repair.serialNumber,
                     repair.issue,
                     repair.assignedTechnician,
+                    repair.branch?.name,
                 ]
                     .filter(Boolean)
                     .join(" ")
@@ -128,7 +129,7 @@ function RepairsTable({
 
                     <input
                         type="search"
-                        placeholder="Ticket, customer, device..."
+                        placeholder="Ticket, customer, branch, device..."
                         value={query}
                         onChange={(e) =>
                             setQuery(
@@ -202,6 +203,7 @@ function RepairsTable({
                         <thead>
                             <tr>
                                 <th>Ticket</th>
+                                <th>Branch</th>
                                 <th>
                                     Customer &
                                     Device
@@ -237,6 +239,10 @@ function RepairsTable({
                                                     repair.createdAt
                                                 ).toLocaleDateString()}
                                             </small>
+                                        </td>
+
+                                        <td>
+                                            {repair.branch?.name ?? "Default"}
                                         </td>
 
                                         <td>

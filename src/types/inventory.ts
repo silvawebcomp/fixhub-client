@@ -1,3 +1,5 @@
+import type { Branch } from "./branch";
+
 export type StockMovementType =
     | "Stock In"
     | "Stock Out"
@@ -30,6 +32,8 @@ export interface InventoryItem {
     createdAt: string;
     updatedAt: string;
     userId: number;
+    branchId: number | null;
+    branch?: Branch | null;
     movements?: StockMovement[];
 }
 
@@ -42,6 +46,7 @@ export interface InventoryPayload {
     supplier?: string;
     location?: string;
     reorderLevel?: number;
+    branchId?: number | "";
 }
 
 export interface InventorySummary {

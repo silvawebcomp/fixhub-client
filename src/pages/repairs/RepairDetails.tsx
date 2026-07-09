@@ -5,12 +5,14 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 
 import DashboardLayout from "../../layouts/DashboardLayout";
+import { getBranches } from "../../services/branchService";
 import { getCustomers } from "../../services/customerService";
 import {
     deleteRepair,
     getRepair,
     updateRepair,
 } from "../../services/repairService";
+import type { Branch } from "../../types/branch";
 import type { Customer } from "../../types/customer";
 import type { Repair, RepairPayload } from "../../types/repair";
 import RepairCommunicationPanel from "./RepairCommunicationPanel";
@@ -33,6 +35,7 @@ function toFormValues(repair: Repair): RepairPayload {
         finalCost: repair.finalCost?.toString() ?? "",
         dueDate: repair.dueDate?.slice(0, 10) ?? "",
         notes: repair.notes ?? "",
+        branchId: repair.branchId?.toString() ?? "",
         statusNote: "",
     };
 }
@@ -44,6 +47,7 @@ function RepairDetails() {
     const [repair, setRepair] = useState<Repair | null>(null);
     const [values, setValues] = useState<RepairPayload | null>(null);
     const [customers, setCustomers] = useState<Customer[]>([]);
+    const [branches, setBranches] = useState<Branch[]>([]);
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
     const [error, setError] = useState("");
@@ -51,11 +55,12 @@ function RepairDetails() {
     const [linkCopied, setLinkCopied] = useState(false);
 
     useEffect(() => {
-        Promise.all([getRepair(repairId), getCustomers()])
-            .then(([repairData, customerData]) => {
+        Promise.all([getRepair(repairId), getCustomers(), getBranches()])
+            .then(([repairData, customerData, branchData]) => {
                 setRepair(repairData);
                 setValues(toFormValues(repairData));
                 setCustomers(customerData);
+                setBranches(branchData);
             })
             .catch((requestError) => {
                 setError(
@@ -158,7 +163,7 @@ function RepairDetails() {
                         <p className="eyebrow">{repair.ticketNumber || `Repair #${repair.id}`}</p>
                         <h1>{repair.device}</h1>
                         <p>
-                            {repair.customer} - Opened{" "}
+                            {repair.customer} - {repair.branch?.name ?? "Default branch"} - Opened{" "}
                             {new Date(repair.createdAt).toLocaleDateString()}
                         </p>
                     </div>
@@ -179,6 +184,10 @@ function RepairDetails() {
                 </header>
 
                 <section className="ticket-overview">
+                    <div>
+                        <span>Branch</span>
+                        <strong>{repair.branch?.name ?? "Default"}</strong>
+                    </div>
                     <div>
                         <span>Status</span>
                         <strong className={`status status-${repair.status.toLowerCase().replaceAll(" ", "-")}`}>
@@ -229,6 +238,7 @@ function RepairDetails() {
                     <RepairForm
                         values={values}
                         customers={customers}
+                        branches={branches}
                         loading={saving}
                         submitLabel="Save changes"
                         showStatusNote

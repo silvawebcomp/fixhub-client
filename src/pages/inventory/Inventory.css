@@ -14,7 +14,7 @@
 
 .inventory-toolbar {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) 220px;
+    grid-template-columns: minmax(0, 1fr) 220px 220px;
     gap: 14px;
 }
 
@@ -209,4 +209,24 @@
     .inventory-actions {
         flex-direction: column;
     }
+}
+
+.branch-select-inline {
+    display: grid;
+    gap: 5px;
+    color: #334155;
+    font-size: 12px;
+    font-weight: 900;
+    text-transform: uppercase;
+}
+
+.branch-select-inline select {
+    min-height: 44px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    background: #ffffff;
+    color: #111827;
+    font: inherit;
+    padding: 0 12px;
+    text-transform: none;
 }

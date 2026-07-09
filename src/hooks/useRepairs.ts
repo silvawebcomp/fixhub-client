@@ -4,9 +4,9 @@ import {
     getRepairs,
 } from "../api/repairApi";
 
-export function useRepairs() {
+export function useRepairs(branchId?: string) {
     return useQuery({
-        queryKey: ["repairs"],
-        queryFn: getRepairs,
+        queryKey: ["repairs", branchId || "all"],
+        queryFn: () => getRepairs(branchId),
     });
 }

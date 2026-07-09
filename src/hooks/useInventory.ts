@@ -4,9 +4,9 @@ import {
     getInventory,
 } from "../api/inventoryApi";
 
-export function useInventory() {
+export function useInventory(branchId?: string) {
     return useQuery({
-        queryKey: ["inventory"],
-        queryFn: getInventory,
+        queryKey: ["inventory", branchId || "all"],
+        queryFn: () => getInventory(branchId),
     });
 }

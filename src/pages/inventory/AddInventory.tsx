@@ -1,14 +1,18 @@
 import "./AddInventory.css";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
-import { createInventoryItem } from "../../services/inventoryService";
 import DashboardLayout from "../../layouts/DashboardLayout";
+import { getBranches } from "../../services/branchService";
+import { createInventoryItem } from "../../services/inventoryService";
+import type { Branch } from "../../types/branch";
 
 function AddInventory() {
     const navigate = useNavigate();
+    const [branches, setBranches] = useState<Branch[]>([]);
     const [name, setName] = useState("");
+    const [branchId, setBranchId] = useState("");
     const [sku, setSku] = useState("");
     const [category, setCategory] = useState("");
     const [supplier, setSupplier] = useState("");
@@ -19,6 +23,10 @@ function AddInventory() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
 
+    useEffect(() => {
+        getBranches().then(setBranches).catch(console.error);
+    }, []);
+
     async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
         event.preventDefault();
         setLoading(true);
@@ -27,6 +35,7 @@ function AddInventory() {
         try {
             await createInventoryItem({
                 name,
+                branchId: branchId ? Number(branchId) : "",
                 sku,
                 category,
                 supplier,
@@ -74,6 +83,21 @@ function AddInventory() {
                             onChange={(event) => setName(event.target.value)}
                             required
                         />
+                    </label>
+
+                    <label>
+                        Branch
+                        <select
+                            value={branchId}
+                            onChange={(event) => setBranchId(event.target.value)}
+                        >
+                            <option value="">Default branch</option>
+                            {branches.map((branch) => (
+                                <option key={branch.id} value={branch.id}>
+                                    {branch.name}
+                                </option>
+                            ))}
+                        </select>
                     </label>
 
                     <div className="inventory-form-grid">

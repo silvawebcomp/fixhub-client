@@ -1,3 +1,5 @@
+import type { Branch } from "./branch";
+
 export const REPAIR_STATUSES = [
     "Received",
     "Diagnosing",
@@ -44,6 +46,8 @@ export interface Repair {
     createdAt: string;
     updatedAt: string;
     userId: number;
+    branchId: number | null;
+    branch?: Branch | null;
     statusHistory?: RepairStatusHistory[];
 }
 
@@ -63,5 +67,6 @@ export interface RepairPayload {
     finalCost: string;
     dueDate: string;
     notes: string;
+    branchId: string;
     statusNote?: string;
 }

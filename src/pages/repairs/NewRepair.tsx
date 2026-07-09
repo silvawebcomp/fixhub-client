@@ -4,8 +4,10 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
 import DashboardLayout from "../../layouts/DashboardLayout";
+import { getBranches } from "../../services/branchService";
 import { getCustomers } from "../../services/customerService";
 import { createRepair } from "../../services/repairService";
+import type { Branch } from "../../types/branch";
 import type { Customer } from "../../types/customer";
 import type { RepairPayload } from "../../types/repair";
 import RepairForm from "./RepairForm";
@@ -26,17 +28,24 @@ const INITIAL_REPAIR: RepairPayload = {
     finalCost: "",
     dueDate: "",
     notes: "",
+    branchId: "",
 };
 
 function NewRepair() {
     const navigate = useNavigate();
     const [values, setValues] = useState<RepairPayload>(INITIAL_REPAIR);
     const [customers, setCustomers] = useState<Customer[]>([]);
+    const [branches, setBranches] = useState<Branch[]>([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
 
     useEffect(() => {
-        getCustomers().then(setCustomers).catch(console.error);
+        Promise.all([getCustomers(), getBranches()])
+            .then(([customerData, branchData]) => {
+                setCustomers(customerData);
+                setBranches(branchData);
+            })
+            .catch(console.error);
     }, []);
 
     async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
@@ -77,6 +86,7 @@ function NewRepair() {
                 <RepairForm
                     values={values}
                     customers={customers}
+                    branches={branches}
                     loading={loading}
                     submitLabel="Create repair ticket"
                     onChange={setValues}
