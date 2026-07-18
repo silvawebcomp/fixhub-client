@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 
 import {
     getInventory,
-} from "../api/inventoryApi";
+} from "../services/inventoryService";
 
 export function useInventory(branchId?: string) {
     return useQuery({

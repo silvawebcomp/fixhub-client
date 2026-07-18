@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 
 import {
     getDashboardStats,
-} from "../api/dashboardApi";
+} from "../services/dashboardService";
 
 export function useDashboard() {
     return useQuery({

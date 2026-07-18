@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 
 import {
     getRepairs,
-} from "../api/repairApi";
+} from "../services/repairService";
 
 export function useRepairs(branchId?: string) {
     return useQuery({

@@ -33,8 +33,22 @@
 
 @media (max-width: 640px) {
     .topbar {
+        align-items: center;
+        padding: 14px 16px;
+    }
+
+    .topbar h2 {
+        font-size: 16px;
+    }
+
+    .logout-btn {
+        flex: 0 0 auto;
+    }
+}
+
+@media (max-width: 420px) {
+    .topbar {
         align-items: stretch;
         flex-direction: column;
-        padding: 14px 16px;
     }
 }

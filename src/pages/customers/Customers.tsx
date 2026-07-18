@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 
 import DashboardLayout from "../../layouts/DashboardLayout";
 
-import { deleteCustomer } from "../../api/customerApi";
+import { deleteCustomer } from "../../services/customerService";
 import { useCustomers } from "../../hooks/useCustomers";
 import { useSearch } from "../../hooks/useSearch";
 
