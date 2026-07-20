@@ -1,92 +1,220 @@
 .invoice-form-grid {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) 340px;
+    grid-template-columns: minmax(0, 1fr) minmax(320px, 380px);
     align-items: start;
-    gap: 18px;
+    gap: 22px;
+    width: 100%;
 }
 
 .invoice-form-panel,
 .invoice-summary-panel {
+    min-width: 0;
     border: 1px solid #dbe3ee;
     border-radius: 8px;
     background: #ffffff;
-    box-shadow: 0 16px 34px rgba(15, 23, 42, 0.06);
+    box-shadow: 0 18px 38px rgba(15, 23, 42, 0.07);
 }
 
 .invoice-form-panel {
+    display: grid;
+    gap: 20px;
+    padding: 24px;
+}
+
+.invoice-summary-panel {
+    position: sticky;
+    top: 22px;
     display: grid;
     gap: 18px;
     padding: 22px;
 }
 
-.invoice-summary-panel {
-    position: sticky;
-    top: 20px;
-    padding: 20px;
+.invoice-workflow-strip {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 10px;
+    border: 1px solid #dbeafe;
+    border-radius: 8px;
+    background: #f8fbff;
+    padding: 10px;
+}
+
+.invoice-workflow-strip span {
+    min-height: 38px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 7px;
+    background: #ffffff;
+    color: #1d4ed8;
+    font-size: 12px;
+    font-weight: 900;
+    text-align: center;
 }
 
 .invoice-section-heading {
     display: grid;
-    gap: 4px;
+    gap: 5px;
 }
 
 .invoice-section-heading h3,
 .invoice-summary-panel h3 {
     margin: 0;
     color: #172033;
-    font-size: 18px;
+    font-size: 19px;
+    line-height: 1.2;
 }
 
-.invoice-section-heading p {
+.invoice-section-heading p,
+.invoice-preview-top p {
     margin: 0;
     color: #64748b;
-    line-height: 1.5;
+    line-height: 1.45;
 }
 
+.field-block,
 .invoice-form-panel label {
+    min-width: 0;
     display: grid;
     gap: 8px;
     color: #334155;
     font-size: 13px;
-    font-weight: 800;
+    font-weight: 850;
+}
+
+.field-label {
+    color: #334155;
+    font-size: 13px;
+    font-weight: 850;
 }
 
 .invoice-form-panel input,
 .invoice-form-panel select,
 .invoice-form-panel textarea {
     width: 100%;
+    min-width: 0;
     border: 1px solid #cbd5e1;
     border-radius: 8px;
     background: #ffffff;
     color: #111827;
     font: inherit;
-    font-weight: 500;
+    font-size: 15px;
+    font-weight: 650;
     outline: none;
     padding: 13px 14px;
     transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
+.invoice-form-panel textarea {
+    resize: vertical;
+}
+
 .invoice-form-panel input:focus,
 .invoice-form-panel select:focus,
-.invoice-form-panel textarea:focus {
+.invoice-form-panel textarea:focus,
+.repair-option:focus-visible,
+.icon-text-button:focus-visible,
+.secondary-invoice-btn:focus-visible,
+.new-invoice-btn:focus-visible {
     border-color: #2563eb;
     box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.14);
+    outline: none;
+}
+
+.repair-picker {
+    display: grid;
+    gap: 10px;
+    max-height: 252px;
+    overflow: auto;
+    border: 1px solid #dbe3ee;
+    border-radius: 8px;
+    background: #f8fafc;
+    padding: 10px;
+}
+
+.repair-picker-empty {
+    margin: 0;
+    border-radius: 8px;
+    background: #ffffff;
+    color: #64748b;
+    padding: 14px;
+}
+
+.repair-option {
+    display: grid;
+    grid-template-columns: minmax(130px, 0.7fr) minmax(150px, 1fr) minmax(180px, 1.1fr);
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+    border: 1px solid #dbe3ee;
+    border-radius: 8px;
+    background: #ffffff;
+    color: #172033;
+    cursor: pointer;
+    font: inherit;
+    padding: 13px 14px;
+    text-align: left;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.repair-option:hover {
+    border-color: #bfdbfe;
+    box-shadow: 0 10px 22px rgba(37, 99, 235, 0.1);
+    transform: translateY(-1px);
+}
+
+.repair-option.is-selected {
+    border-color: #2563eb;
+    background: #eff6ff;
+}
+
+.repair-option span,
+.repair-option strong,
+.repair-option small {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.repair-option span {
+    color: #1d4ed8;
+    font-size: 12px;
+    font-weight: 900;
+}
+
+.repair-option strong {
+    font-size: 15px;
+}
+
+.repair-option small {
+    color: #64748b;
+    font-size: 13px;
+    font-weight: 700;
 }
 
 .selected-repair-card {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 8px 14px;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 10px 14px;
     border: 1px solid #bfdbfe;
     border-radius: 8px;
     background: #eff6ff;
     color: #334155;
-    padding: 14px;
+    padding: 15px;
 }
 
 .selected-repair-card strong {
     grid-column: 1 / -1;
     color: #172033;
+    font-size: 17px;
+}
+
+.selected-repair-card span {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .line-items {
@@ -96,20 +224,54 @@
 
 .line-item-row {
     display: grid;
-    grid-template-columns: minmax(220px, 1fr) 90px 150px auto;
+    grid-template-columns:
+        minmax(190px, 1.5fr)
+        minmax(76px, 0.36fr)
+        minmax(118px, 0.55fr)
+        minmax(118px, 0.52fr)
+        46px;
     align-items: end;
     gap: 12px;
-    border: 1px solid #edf2f7;
+    min-width: 0;
+    border: 1px solid #e5eaf2;
     border-radius: 8px;
     background: #f8fafc;
     padding: 12px;
+}
+
+.line-item-total {
+    display: grid;
+    gap: 8px;
+    min-width: 0;
+}
+
+.line-item-total span {
+    color: #334155;
+    font-size: 13px;
+    font-weight: 850;
+}
+
+.line-item-total strong {
+    display: flex;
+    align-items: center;
+    min-height: 47px;
+    min-width: 0;
+    overflow: hidden;
+    border: 1px solid #dbe3ee;
+    border-radius: 8px;
+    background: #ffffff;
+    color: #172033;
+    font-size: 14px;
+    font-weight: 900;
+    padding: 0 12px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .icon-text-button,
 .secondary-invoice-btn,
 .new-invoice-btn {
     min-height: 46px;
-    border: 0;
     border-radius: 8px;
     cursor: pointer;
     font: inherit;
@@ -118,10 +280,25 @@
 }
 
 .icon-text-button {
+    width: 46px;
+    min-width: 46px;
     border: 1px solid #dbe3ee;
     background: #ffffff;
     color: #475569;
-    padding: 0 14px;
+    font-size: 0;
+    overflow: hidden;
+    padding: 0;
+}
+
+.icon-text-button::before {
+    content: "-";
+    color: #475569;
+    font-size: 22px;
+    line-height: 1;
+}
+
+.icon-text-button {
+    color: transparent;
 }
 
 .icon-text-button:disabled {
@@ -133,6 +310,7 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    width: fit-content;
     border: 1px solid #cbd5e1;
     background: #ffffff;
     color: #172033;
@@ -145,10 +323,74 @@
     gap: 14px;
 }
 
+.invoice-preview-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 14px;
+}
+
+.payment-chip {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 32px;
+    border-radius: 999px;
+    padding: 0 12px;
+    font-size: 12px;
+    font-weight: 900;
+    white-space: nowrap;
+}
+
+.payment-chip.is-draft {
+    border: 1px solid #fed7aa;
+    background: #fff7ed;
+    color: #9a3412;
+}
+
+.payment-chip.is-unpaid {
+    border: 1px solid #fecaca;
+    background: #fef2f2;
+    color: #b91c1c;
+}
+
+.payment-chip.is-partial {
+    border: 1px solid #fde68a;
+    background: #fffbeb;
+    color: #92400e;
+}
+
+.payment-chip.is-paid {
+    border: 1px solid #bbf7d0;
+    background: #f0fdf4;
+    color: #15803d;
+}
+
+.invoice-preview-client {
+    display: grid;
+    gap: 4px;
+    border: 1px solid #e5eaf2;
+    border-radius: 8px;
+    background: #f8fafc;
+    padding: 14px;
+}
+
+.invoice-preview-client span,
+.invoice-preview-client small {
+    color: #64748b;
+    font-size: 12px;
+    font-weight: 800;
+}
+
+.invoice-preview-client strong {
+    color: #172033;
+    font-size: 18px;
+}
+
 .invoice-summary-panel dl {
     display: grid;
     gap: 0;
-    margin: 18px 0;
+    margin: 0;
 }
 
 .invoice-summary-panel dl > div {
@@ -161,13 +403,15 @@
 
 .invoice-summary-panel dt {
     color: #64748b;
-    font-weight: 800;
+    font-weight: 850;
 }
 
 .invoice-summary-panel dd {
+    min-width: 0;
     margin: 0;
     color: #172033;
     font-weight: 900;
+    text-align: right;
 }
 
 .summary-total dt,
@@ -182,7 +426,12 @@
     color: #2563eb;
 }
 
-@media (max-width: 1080px) {
+.invoice-summary-panel .new-invoice-btn {
+    width: 100%;
+    margin-top: 2px;
+}
+
+@media (max-width: 1280px) {
     .invoice-form-grid {
         grid-template-columns: 1fr;
     }
@@ -193,10 +442,34 @@
     }
 }
 
-@media (max-width: 780px) {
-    .line-item-row,
+@media (max-width: 860px) {
+    .invoice-workflow-strip,
     .invoice-two-columns,
-    .selected-repair-card {
+    .selected-repair-card,
+    .repair-option {
         grid-template-columns: 1fr;
+    }
+
+    .line-item-row {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .icon-text-button {
+        width: 100%;
+    }
+}
+
+@media (max-width: 560px) {
+    .invoice-form-panel,
+    .invoice-summary-panel {
+        padding: 18px;
+    }
+
+    .line-item-row {
+        grid-template-columns: 1fr;
+    }
+
+    .invoice-preview-top {
+        display: grid;
     }
 }

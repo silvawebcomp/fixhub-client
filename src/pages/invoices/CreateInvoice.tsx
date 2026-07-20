@@ -57,6 +57,10 @@ function toNumber(value: string) {
     return Number.isFinite(parsed) && parsed > 0 ? parsed : 0;
 }
 
+function lineItemTotal(item: InvoiceForm["items"][number]) {
+    return toNumber(item.quantity) * toNumber(item.unitPrice);
+}
+
 function CreateInvoice() {
     const navigate = useNavigate();
     const [searchParams] = useSearchParams();
@@ -125,6 +129,34 @@ function CreateInvoice() {
         };
     }, [form]);
 
+    const paymentState = useMemo(() => {
+        if (totals.total === 0) {
+            return {
+                label: "Draft",
+                className: "is-draft",
+            };
+        }
+
+        if (totals.balance === 0) {
+            return {
+                label: "Paid in full",
+                className: "is-paid",
+            };
+        }
+
+        if (totals.amountPaid > 0) {
+            return {
+                label: "Part payment",
+                className: "is-partial",
+            };
+        }
+
+        return {
+            label: "Unpaid",
+            className: "is-unpaid",
+        };
+    }, [totals.amountPaid, totals.balance, totals.total]);
+
     function updateField<K extends keyof InvoiceForm>(field: K, value: InvoiceForm[K]) {
         setForm((current) => ({
             ...current,
@@ -163,10 +195,24 @@ function CreateInvoice() {
         }));
     }
 
+    function selectRepair(repair: Repair) {
+        setForm((current) => ({
+            ...current,
+            repairId: String(repair.id),
+            labourCost: repair.finalCost?.toString() ?? current.labourCost,
+        }));
+    }
+
     async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
         event.preventDefault();
         setError("");
         setSaving(true);
+
+        if (!form.repairId) {
+            setError("Select a repair ticket before creating an invoice.");
+            setSaving(false);
+            return;
+        }
 
         const items: InvoiceItemPayload[] = form.items.map((item) => ({
             description: item.description,
@@ -221,29 +267,58 @@ function CreateInvoice() {
                 ) : (
                     <form className="invoice-form-grid" onSubmit={handleSubmit}>
                         <div className="invoice-form-panel">
+                            <div className="invoice-workflow-strip" aria-label="Invoice workflow">
+                                <span>1. Select repair</span>
+                                <span>2. Add charges</span>
+                                <span>3. Record payment</span>
+                            </div>
+
                             <div className="invoice-section-heading">
                                 <h3>Repair and customer</h3>
                                 <p>Select the repair ticket this invoice should close out.</p>
                             </div>
 
-                            <label>
-                                Repair ticket
-                                <select
-                                    value={form.repairId}
-                                    onChange={(event) =>
-                                        updateField("repairId", event.target.value)
-                                    }
-                                    required
+                            <div className="field-block">
+                                <span className="field-label">Repair ticket</span>
+
+                                <div
+                                    className="repair-picker"
+                                    role="listbox"
+                                    aria-label="Repair tickets"
                                 >
-                                    <option value="">Select a repair</option>
-                                    {repairs.map((repair) => (
-                                        <option key={repair.id} value={repair.id}>
-                                            {repair.ticketNumber || `Repair #${repair.id}`} -{" "}
-                                            {repair.customer} - {repair.device}
-                                        </option>
-                                    ))}
-                                </select>
-                            </label>
+                                    {repairs.length === 0 ? (
+                                        <p className="repair-picker-empty">
+                                            No repair tickets are ready for invoicing.
+                                        </p>
+                                    ) : (
+                                        repairs.map((repair) => (
+                                            <button
+                                                type="button"
+                                                key={repair.id}
+                                                className={
+                                                    repair.id === Number(form.repairId)
+                                                        ? "repair-option is-selected"
+                                                        : "repair-option"
+                                                }
+                                                onClick={() => selectRepair(repair)}
+                                                role="option"
+                                                aria-selected={
+                                                    repair.id === Number(form.repairId)
+                                                }
+                                            >
+                                                <span>
+                                                    {repair.ticketNumber ||
+                                                        `Repair #${repair.id}`}
+                                                </span>
+                                                <strong>{repair.customer}</strong>
+                                                <small>
+                                                    {repair.device} · {repair.status}
+                                                </small>
+                                            </button>
+                                        ))
+                                    )}
+                                </div>
+                            </div>
 
                             {selectedRepair && (
                                 <div className="selected-repair-card">
@@ -253,6 +328,14 @@ function CreateInvoice() {
                                     <span>
                                         Estimate:{" "}
                                         {money(selectedRepair.estimatedCost ?? 0)}
+                                    </span>
+                                    <span>
+                                        Phone: {selectedRepair.customerPhone || "Not recorded"}
+                                    </span>
+                                    <span>
+                                        Ticket:{" "}
+                                        {selectedRepair.ticketNumber ||
+                                            `Repair #${selectedRepair.id}`}
                                     </span>
                                 </div>
                             )}
@@ -331,9 +414,15 @@ function CreateInvoice() {
                                             />
                                         </label>
 
+                                        <div className="line-item-total">
+                                            <span>Total</span>
+                                            <strong>{money(lineItemTotal(item))}</strong>
+                                        </div>
+
                                         <button
                                             type="button"
                                             className="icon-text-button"
+                                            aria-label="Remove line item"
                                             onClick={() => removeItem(index)}
                                             disabled={form.items.length === 1}
                                         >
@@ -447,7 +536,29 @@ function CreateInvoice() {
                         </div>
 
                         <aside className="invoice-summary-panel">
-                            <h3>Invoice summary</h3>
+                            <div className="invoice-preview-top">
+                                <div>
+                                    <h3>Invoice preview</h3>
+                                    <p>Draft total updates as you type.</p>
+                                </div>
+
+                                <span className={`payment-chip ${paymentState.className}`}>
+                                    {paymentState.label}
+                                </span>
+                            </div>
+
+                            {selectedRepair && (
+                                <div className="invoice-preview-client">
+                                    <span>Bill to</span>
+                                    <strong>{selectedRepair.customer}</strong>
+                                    <small>
+                                        {selectedRepair.device} ·{" "}
+                                        {selectedRepair.ticketNumber ||
+                                            `Repair #${selectedRepair.id}`}
+                                    </small>
+                                </div>
+                            )}
+
                             <dl>
                                 <div>
                                     <dt>Labour</dt>
