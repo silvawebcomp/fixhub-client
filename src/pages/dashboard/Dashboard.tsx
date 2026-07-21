@@ -647,7 +647,7 @@ function Dashboard() {
                             <p>Business health</p>
                             <h2>
                                 {shopHealth >= 80
-                                    ? "Investor-ready operations"
+                                    ? "Scalable shop operations"
                                     : shopHealth >= 60
                                       ? "Healthy with action points"
                                       : "Needs management attention"}
