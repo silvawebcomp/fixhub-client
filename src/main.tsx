@@ -33,9 +33,11 @@ ReactDOM.createRoot(
             <AuthProvider>
                 <App />
             </AuthProvider>
-            <ReactQueryDevtools
-                initialIsOpen={false}
-            />
+            {import.meta.env.DEV ? (
+                <ReactQueryDevtools
+                    initialIsOpen={false}
+                />
+            ) : null}
         </QueryClientProvider>
     </React.StrictMode>
 );

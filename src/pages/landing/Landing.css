@@ -4,6 +4,8 @@
 .pricing,
 .faq {
     padding: 82px clamp(18px, 5vw, 84px);
+    max-width: 100%;
+    overflow-x: clip;
 }
 
 .features,
@@ -23,6 +25,7 @@
 .section-header {
     max-width: 860px;
     margin-bottom: 32px;
+    min-width: 0;
 }
 
 .section-header p {
@@ -41,6 +44,7 @@
     font-size: clamp(30px, 4vw, 52px);
     line-height: 1.06;
     letter-spacing: 0;
+    overflow-wrap: anywhere;
 }
 
 .section-header span {
@@ -70,6 +74,7 @@
 .feature-card {
     min-height: 270px;
     padding: 24px;
+    min-width: 0;
 }
 
 .feature-card span {
@@ -77,6 +82,7 @@
     font-size: 12px;
     font-weight: 900;
     text-transform: uppercase;
+    overflow-wrap: anywhere;
 }
 
 .feature-card h3,
@@ -87,6 +93,7 @@
     color: #111827;
     font-size: 22px;
     line-height: 1.2;
+    overflow-wrap: anywhere;
 }
 
 .feature-card p,
@@ -166,12 +173,14 @@
     border-radius: 8px;
     background: #ffffff;
     padding: 24px;
+    min-width: 0;
 }
 
 .stat-card h3 {
     margin: 0;
     color: #0f172a;
     font-size: clamp(30px, 4vw, 44px);
+    overflow-wrap: anywhere;
 }
 
 .stat-card p {
@@ -201,6 +210,7 @@
     border-radius: 8px;
     background: rgba(255, 255, 255, 0.08);
     padding: 24px;
+    min-width: 0;
 }
 
 .ops-board-header strong {
@@ -237,6 +247,7 @@
     border-radius: 8px;
     background: rgba(255, 255, 255, 0.08);
     padding: 16px;
+    min-width: 0;
 }
 
 .ops-grid small,
@@ -252,6 +263,7 @@
     margin-top: 18px;
     color: #ffffff;
     font-size: 26px;
+    overflow-wrap: anywhere;
 }
 
 .customer-card {
@@ -284,6 +296,7 @@
 .testimonial-card {
     min-height: 220px;
     padding: 24px;
+    min-width: 0;
 }
 
 .pricing-grid {
@@ -297,6 +310,7 @@
     flex-direction: column;
     min-height: 430px;
     padding: 24px;
+    min-width: 0;
 }
 
 .pricing-card h4 {
@@ -304,6 +318,7 @@
     color: #111827;
     font-size: 34px;
     line-height: 1.05;
+    overflow-wrap: anywhere;
 }
 
 .pricing-card ul {
@@ -357,6 +372,7 @@
 .faq-grid article {
     min-height: 210px;
     padding: 22px;
+    min-width: 0;
 }
 
 @media (max-width: 1040px) {
@@ -379,7 +395,7 @@
     .testimonials,
     .pricing,
     .faq {
-        padding: 58px 16px;
+        padding: 56px 14px;
     }
 
     .stats,
@@ -404,5 +420,68 @@
 
     .workflow-step {
         grid-template-columns: 46px minmax(0, 1fr);
+    }
+
+    .section-header {
+        margin-bottom: 24px;
+    }
+
+    .section-header h2,
+    .stats-intro h2 {
+        font-size: clamp(28px, 9vw, 38px);
+        line-height: 1.08;
+    }
+
+    .section-header span {
+        font-size: 16px;
+        line-height: 1.55;
+    }
+
+    .feature-card,
+    .testimonial-card,
+    .pricing-card,
+    .faq-grid article,
+    .ops-board,
+    .customer-card,
+    .stat-card {
+        padding: 18px;
+    }
+
+    .pricing-card {
+        min-height: auto;
+    }
+
+    .pricing-card button {
+        margin-top: 24px;
+    }
+
+    .ops-board-header strong,
+    .customer-card h3 {
+        font-size: 24px;
+    }
+
+    .ops-grid strong {
+        font-size: 23px;
+    }
+}
+
+@media (max-width: 380px) {
+    .features,
+    .stats,
+    .testimonials,
+    .pricing,
+    .faq {
+        padding-right: 12px;
+        padding-left: 12px;
+    }
+
+    .feature-card,
+    .testimonial-card,
+    .pricing-card,
+    .faq-grid article,
+    .ops-board,
+    .customer-card,
+    .stat-card {
+        padding: 16px;
     }
 }
