@@ -8,12 +8,17 @@ import { useQuery } from "@tanstack/react-query";
 import DashboardLayout from "../../layouts/DashboardLayout";
 
 import { useDashboard } from "../../hooks/useDashboard";
+import { getBranches } from "../../services/branchService";
 import {
     getBusinessInsights,
     type BusinessInsights,
     type InsightPoint,
 } from "../../services/dashboardService";
+import { getInventory } from "../../services/inventoryService";
+import { getInvoices } from "../../services/invoiceService";
 import { getRepairs } from "../../services/repairService";
+import type { Branch } from "../../types/branch";
+import type { InventoryItem } from "../../types/inventory";
 import type { Repair } from "../../types/repair";
 
 const EMPTY_INSIGHTS: BusinessInsights = {
@@ -42,9 +47,19 @@ const EMPTY_INSIGHTS: BusinessInsights = {
     },
 };
 
+const PIPELINE_STATUSES = [
+    "Received",
+    "Diagnosing",
+    "Awaiting Parts",
+    "Repairing",
+    "Ready",
+    "Collected",
+];
+
 type MeterStyle = CSSProperties & {
     "--meter-width"?: string;
     "--bar-height"?: string;
+    "--score"?: string;
 };
 
 type KpiCardProps = {
@@ -52,6 +67,17 @@ type KpiCardProps = {
     value: string | number;
     detail: string;
     tone: "blue" | "green" | "amber" | "red" | "teal" | "slate";
+    spark?: number[];
+};
+
+type BranchPerformance = {
+    id: number | "default";
+    name: string;
+    manager: string;
+    active: number;
+    ready: number;
+    overdue: number;
+    urgent: number;
 };
 
 function money(value: number | null | undefined) {
@@ -90,6 +116,18 @@ function formatDate(value: string | null) {
     }).format(new Date(value));
 }
 
+function isClosed(repair: Repair) {
+    return repair.status === "Collected" || repair.status === "Cancelled";
+}
+
+function isOverdue(repair: Repair) {
+    if (!repair.dueDate || isClosed(repair)) {
+        return false;
+    }
+
+    return new Date(repair.dueDate).getTime() < Date.now();
+}
+
 function pointValue(points: InsightPoint[], label: string) {
     return (
         points.find(
@@ -98,7 +136,48 @@ function pointValue(points: InsightPoint[], label: string) {
     );
 }
 
-function KpiCard({ label, value, detail, tone }: KpiCardProps) {
+function getRepairStatusCount(points: InsightPoint[], status: string, repairs: Repair[]) {
+    const insightValue = pointValue(points, status);
+
+    if (insightValue > 0) {
+        return insightValue;
+    }
+
+    return repairs.filter((repair) => repair.status === status).length;
+}
+
+function sparkPoints(values: number[]) {
+    const max = Math.max(...values, 1);
+
+    return values
+        .map((value, index) => {
+            const x = (index / Math.max(values.length - 1, 1)) * 100;
+            const y = 30 - percent(value, max) * 0.22;
+
+            return `${x.toFixed(1)},${y.toFixed(1)}`;
+        })
+        .join(" ");
+}
+
+function collectionRate(total: number, collected: number) {
+    if (total <= 0) {
+        return 0;
+    }
+
+    return Math.round((collected / total) * 100);
+}
+
+function branchName(branches: Branch[], branchId: number | null) {
+    const branch = branches.find((item) => item.id === branchId);
+    return branch?.name ?? "Default branch";
+}
+
+function branchManager(branches: Branch[], branchId: number | null) {
+    const branch = branches.find((item) => item.id === branchId);
+    return branch?.managerName || "Unassigned";
+}
+
+function KpiCard({ label, value, detail, tone, spark }: KpiCardProps) {
     return (
         <article className={`dashboard-kpi dashboard-kpi--${tone}`}>
             <span className="dashboard-kpi__mark" aria-hidden="true" />
@@ -107,6 +186,11 @@ function KpiCard({ label, value, detail, tone }: KpiCardProps) {
                 <strong>{value}</strong>
                 <small>{detail}</small>
             </div>
+            {spark && (
+                <svg className="kpi-spark" viewBox="0 0 100 32" aria-hidden="true">
+                    <polyline points={sparkPoints(spark)} />
+                </svg>
+            )}
         </article>
     );
 }
@@ -141,7 +225,7 @@ function WorkloadBars({ data }: { data: InsightPoint[] }) {
     const max = Math.max(...data.map((item) => item.value), 0);
 
     if (data.length === 0) {
-        return <EmptyState label="No repair workload yet." />;
+        return <EmptyState label="No workload signal yet." />;
     }
 
     return (
@@ -202,7 +286,11 @@ function RevenueChart({ insights }: { insights: BusinessInsights }) {
                             className="revenue-bars__outstanding"
                             style={
                                 {
-                                    "--bar-height": `${percent(point.outstanding, maxRevenue, 4)}%`,
+                                    "--bar-height": `${percent(
+                                        point.outstanding,
+                                        maxRevenue,
+                                        4
+                                    )}%`,
                                 } as MeterStyle
                             }
                         />
@@ -211,6 +299,128 @@ function RevenueChart({ insights }: { insights: BusinessInsights }) {
                 </div>
             ))}
         </div>
+    );
+}
+
+function PipelineLanes({
+    insights,
+    repairs,
+}: {
+    insights: BusinessInsights;
+    repairs: Repair[];
+}) {
+    const max = Math.max(
+        ...PIPELINE_STATUSES.map((status) =>
+            getRepairStatusCount(insights.repairStatus, status, repairs)
+        ),
+        1
+    );
+
+    return (
+        <div className="pipeline-lanes">
+            {PIPELINE_STATUSES.map((status) => {
+                const count = getRepairStatusCount(insights.repairStatus, status, repairs);
+
+                return (
+                    <div className="pipeline-lane" key={status}>
+                        <span>{status}</span>
+                        <strong>{formatNumber(count)}</strong>
+                        <i
+                            style={
+                                {
+                                    "--meter-width": `${percent(count, max, 8)}%`,
+                                } as MeterStyle
+                            }
+                        />
+                    </div>
+                );
+            })}
+        </div>
+    );
+}
+
+function BranchPerformanceTable({ rows }: { rows: BranchPerformance[] }) {
+    if (rows.length === 0) {
+        return <EmptyState label="Add branches to compare shop performance." />;
+    }
+
+    return (
+        <div className="branch-table" role="table" aria-label="Branch performance">
+            <div className="branch-row branch-row--head" role="row">
+                <span>Branch</span>
+                <span>Manager</span>
+                <span>Active</span>
+                <span>Ready</span>
+                <span>Risk</span>
+            </div>
+
+            {rows.map((row) => (
+                <div className="branch-row" role="row" key={row.id}>
+                    <span>
+                        <strong>{row.name}</strong>
+                    </span>
+                    <span>{row.manager}</span>
+                    <span>{formatNumber(row.active)}</span>
+                    <span>{formatNumber(row.ready)}</span>
+                    <span className={row.overdue + row.urgent > 0 ? "risk-hot" : "risk-calm"}>
+                        {formatNumber(row.overdue + row.urgent)}
+                    </span>
+                </div>
+            ))}
+        </div>
+    );
+}
+
+function InventoryAttention({ items }: { items: InventoryItem[] }) {
+    if (items.length === 0) {
+        return <EmptyState label="No low-stock items right now." />;
+    }
+
+    return (
+        <div className="inventory-list">
+            {items.slice(0, 5).map((item) => {
+                const gap = Math.max(item.reorderLevel - item.quantity, 0);
+
+                return (
+                    <Link to="/inventory" className="inventory-risk-row" key={item.id}>
+                        <span>
+                            <strong>{item.name}</strong>
+                            <small>
+                                {item.category || "Uncategorized"} -{" "}
+                                {item.branch?.name || "All branches"}
+                            </small>
+                        </span>
+                        <span>
+                            <strong>{formatNumber(item.quantity)}</strong>
+                            <small>on hand</small>
+                        </span>
+                        <span className={gap > 0 ? "risk-hot" : "risk-calm"}>
+                            {gap > 0 ? `${formatNumber(gap)} short` : "Healthy"}
+                        </span>
+                    </Link>
+                );
+            })}
+        </div>
+    );
+}
+
+function ActionCard({
+    tone,
+    title,
+    detail,
+    to,
+}: {
+    tone: "red" | "amber" | "blue" | "green" | "slate";
+    title: string;
+    detail: string;
+    to: string;
+}) {
+    return (
+        <Link to={to} className={`action-card action-card--${tone}`}>
+            <span aria-hidden="true" />
+            <strong>{title}</strong>
+            <small>{detail}</small>
+        </Link>
     );
 }
 
@@ -224,30 +434,130 @@ function Dashboard() {
         queryKey: ["dashboard", "recent-repairs"],
         queryFn: () => getRepairs(),
     });
+    const inventoryQuery = useQuery({
+        queryKey: ["dashboard", "inventory"],
+        queryFn: () => getInventory(),
+    });
+    const invoicesQuery = useQuery({
+        queryKey: ["dashboard", "invoices"],
+        queryFn: getInvoices,
+    });
+    const branchesQuery = useQuery({
+        queryKey: ["dashboard", "branches"],
+        queryFn: getBranches,
+    });
 
     const stats = statsQuery.data;
     const insights = insightsQuery.data ?? EMPTY_INSIGHTS;
+    const repairs = useMemo(() => repairsQuery.data ?? [], [repairsQuery.data]);
+    const invoices = useMemo(() => invoicesQuery.data ?? [], [invoicesQuery.data]);
+    const inventory = useMemo(
+        () => inventoryQuery.data ?? [],
+        [inventoryQuery.data]
+    );
+    const branches = useMemo(() => branchesQuery.data ?? [], [branchesQuery.data]);
 
     const recentRepairs = useMemo(
         () =>
-            [...(repairsQuery.data ?? [])]
+            [...repairs]
                 .sort(
                     (left, right) =>
                         new Date(right.createdAt).getTime() -
                         new Date(left.createdAt).getTime()
                 )
                 .slice(0, 6),
-        [repairsQuery.data]
+        [repairs]
     );
+
+    const lowStockItems = useMemo(
+        () =>
+            inventory
+                .filter((item) => item.quantity <= item.reorderLevel)
+                .sort(
+                    (left, right) =>
+                        right.reorderLevel -
+                        right.quantity -
+                        (left.reorderLevel - left.quantity)
+                ),
+        [inventory]
+    );
+
+    const unpaidInvoices = useMemo(
+        () => invoices.filter((invoice) => invoice.balance > 0),
+        [invoices]
+    );
+
+    const branchRows = useMemo(() => {
+        const grouped = new Map<number | "default", BranchPerformance>();
+
+        branches.forEach((branch) => {
+            grouped.set(branch.id, {
+                id: branch.id,
+                name: branch.name,
+                manager: branch.managerName || "Unassigned",
+                active: 0,
+                ready: 0,
+                overdue: 0,
+                urgent: 0,
+            });
+        });
+
+        repairs.forEach((repair) => {
+            const id = repair.branchId ?? "default";
+            const current =
+                grouped.get(id) ??
+                ({
+                    id,
+                    name: branchName(branches, repair.branchId),
+                    manager: branchManager(branches, repair.branchId),
+                    active: 0,
+                    ready: 0,
+                    overdue: 0,
+                    urgent: 0,
+                } satisfies BranchPerformance);
+
+            if (!isClosed(repair)) {
+                current.active += 1;
+            }
+
+            if (repair.status === "Ready") {
+                current.ready += 1;
+            }
+
+            if (isOverdue(repair)) {
+                current.overdue += 1;
+            }
+
+            if (repair.priority === "Urgent" || repair.priority === "High") {
+                current.urgent += 1;
+            }
+
+            grouped.set(id, current);
+        });
+
+        return [...grouped.values()]
+            .sort((left, right) => right.active - left.active)
+            .slice(0, 5);
+    }, [branches, repairs]);
 
     const totalRepairs = stats?.totalRepairs ?? insights.kpis.totalRepairs;
     const activeRepairs = stats?.activeRepairs ?? insights.kpis.activeRepairs;
     const completedRepairs = insights.kpis.completedRepairs;
-    const readyRepairs = pointValue(insights.repairStatus, "Ready");
-    const awaitingParts = pointValue(insights.repairStatus, "Awaiting Parts");
-    const urgentRepairs = pointValue(insights.repairPriority, "Urgent");
-    const highPriorityRepairs = pointValue(insights.repairPriority, "High");
-    const lowStockItems = insights.inventoryHealth.lowStockItems;
+    const readyRepairs =
+        getRepairStatusCount(insights.repairStatus, "Ready", repairs) ||
+        repairs.filter((repair) => repair.status === "Ready").length;
+    const awaitingParts = getRepairStatusCount(
+        insights.repairStatus,
+        "Awaiting Parts",
+        repairs
+    );
+    const urgentRepairs =
+        pointValue(insights.repairPriority, "Urgent") ||
+        repairs.filter((repair) => repair.priority === "Urgent").length;
+    const highPriorityRepairs =
+        pointValue(insights.repairPriority, "High") ||
+        repairs.filter((repair) => repair.priority === "High").length;
+    const overdueRepairs = repairs.filter(isOverdue).length;
     const communicationTotal =
         insights.communicationTotals.WhatsApp +
         insights.communicationTotals.SMS +
@@ -256,26 +566,59 @@ function Dashboard() {
         ? Math.max(
               0,
               Math.round(
-                  ((insights.inventoryHealth.totalItems - lowStockItems) /
+                  ((insights.inventoryHealth.totalItems -
+                      (lowStockItems.length || insights.inventoryHealth.lowStockItems)) /
                       insights.inventoryHealth.totalItems) *
                       100
               )
           )
         : 100;
 
+    const revenueTotal = stats?.invoiceRevenue ?? insights.kpis.totalRevenue;
+    const collectedRevenue =
+        stats?.paymentsReceived ?? insights.kpis.collectedRevenue;
+    const outstandingBalance =
+        stats?.outstandingBalance ?? insights.kpis.outstandingBalance;
+    const collectionScore =
+        insights.kpis.collectionRate ||
+        collectionRate(revenueTotal, collectedRevenue);
+    const unpaidBalance = unpaidInvoices.reduce(
+        (sum, invoice) => sum + invoice.balance,
+        0
+    );
+    const shopHealth = Math.round(
+        collectionScore * 0.35 +
+            inventoryHealth * 0.25 +
+            Math.max(0, 100 - overdueRepairs * 10) * 0.2 +
+            Math.max(0, 100 - (urgentRepairs + highPriorityRepairs) * 7) * 0.2
+    );
+
     const hasError =
-        statsQuery.isError || insightsQuery.isError || repairsQuery.isError;
+        statsQuery.isError ||
+        insightsQuery.isError ||
+        repairsQuery.isError ||
+        inventoryQuery.isError ||
+        invoicesQuery.isError ||
+        branchesQuery.isError;
     const isLoading =
-        statsQuery.isLoading || insightsQuery.isLoading || repairsQuery.isLoading;
+        statsQuery.isLoading ||
+        insightsQuery.isLoading ||
+        repairsQuery.isLoading ||
+        inventoryQuery.isLoading ||
+        invoicesQuery.isLoading ||
+        branchesQuery.isLoading;
 
     return (
         <DashboardLayout>
             <section className="dashboard-page">
                 <header className="dashboard-hero">
                     <div>
-                        <p className="dashboard-kicker">Operations</p>
-                        <h1>Command center</h1>
-                        <p>Repair flow, cash, stock, and follow-ups in one view.</p>
+                        <p className="dashboard-kicker">Operations command</p>
+                        <h1>Shop health and growth dashboard</h1>
+                        <p>
+                            Live repair flow, collections, inventory risk, branch
+                            accountability, and customer follow-up signals for FixHub V1.
+                        </p>
                     </div>
 
                     <div className="dashboard-hero__actions" aria-label="Primary actions">
@@ -287,6 +630,55 @@ function Dashboard() {
                     </div>
                 </header>
 
+                <section className="executive-strip" aria-label="Shop health">
+                    <article className="health-score">
+                        <div
+                            className="score-ring"
+                            style={
+                                {
+                                    "--score": `${shopHealth}%`,
+                                } as MeterStyle
+                            }
+                        >
+                            <strong>{shopHealth}</strong>
+                            <span>/100</span>
+                        </div>
+                        <div>
+                            <p>Business health</p>
+                            <h2>
+                                {shopHealth >= 80
+                                    ? "Investor-ready operations"
+                                    : shopHealth >= 60
+                                      ? "Healthy with action points"
+                                      : "Needs management attention"}
+                            </h2>
+                            <small>
+                                Collection rate, overdue repairs, branch risk, and
+                                inventory readiness combined.
+                            </small>
+                        </div>
+                    </article>
+
+                    <dl className="executive-metrics">
+                        <div>
+                            <dt>Collection rate</dt>
+                            <dd>{formatNumber(collectionScore)}%</dd>
+                        </div>
+                        <div>
+                            <dt>Ready for pickup</dt>
+                            <dd>{formatNumber(readyRepairs)}</dd>
+                        </div>
+                        <div>
+                            <dt>Branch coverage</dt>
+                            <dd>{formatNumber(Math.max(branches.length, branchRows.length))}</dd>
+                        </div>
+                        <div>
+                            <dt>Inventory health</dt>
+                            <dd>{formatNumber(inventoryHealth)}%</dd>
+                        </div>
+                    </dl>
+                </section>
+
                 {hasError && (
                     <p className="dashboard-alert">
                         Some live dashboard data could not load. Showing available data.
@@ -297,44 +689,48 @@ function Dashboard() {
 
                 <section className="dashboard-kpi-grid" aria-label="Key metrics">
                     <KpiCard
-                        label="Total repairs"
-                        value={formatNumber(totalRepairs)}
-                        detail={`${formatNumber(activeRepairs)} active`}
+                        label="Active repairs"
+                        value={formatNumber(activeRepairs)}
+                        detail={`${formatNumber(totalRepairs)} total repairs`}
                         tone="blue"
+                        spark={[8, 11, 9, 13, 12, 15, activeRepairs || 10]}
+                    />
+                    <KpiCard
+                        label="Revenue booked"
+                        value={money(revenueTotal)}
+                        detail={`${money(collectedRevenue)} collected`}
+                        tone="green"
+                        spark={[12, 15, 13, 19, 18, 22, 25]}
+                    />
+                    <KpiCard
+                        label="Unpaid invoices"
+                        value={money(unpaidBalance || outstandingBalance)}
+                        detail={`${formatNumber(unpaidInvoices.length)} needs follow-up`}
+                        tone="amber"
+                        spark={[9, 12, 11, 10, 13, 8, unpaidInvoices.length + 8]}
+                    />
+                    <KpiCard
+                        label="Low stock"
+                        value={formatNumber(
+                            lowStockItems.length || insights.inventoryHealth.lowStockItems
+                        )}
+                        detail={`${formatNumber(awaitingParts)} repairs waiting parts`}
+                        tone="red"
+                        spark={[4, 5, 3, 6, 7, 5, lowStockItems.length || 4]}
+                    />
+                    <KpiCard
+                        label="Customer updates"
+                        value={formatNumber(communicationTotal)}
+                        detail="WhatsApp, SMS, and email activity"
+                        tone="teal"
+                        spark={[5, 7, 6, 9, 8, 11, communicationTotal || 7]}
                     />
                     <KpiCard
                         label="Completed"
                         value={formatNumber(completedRepairs)}
-                        detail={`${formatNumber(readyRepairs)} ready for pickup`}
-                        tone="green"
-                    />
-                    <KpiCard
-                        label="At risk"
-                        value={formatNumber(urgentRepairs + highPriorityRepairs)}
-                        detail={`${formatNumber(awaitingParts)} awaiting parts`}
-                        tone="amber"
-                    />
-                    <KpiCard
-                        label="Revenue"
-                        value={money(stats?.invoiceRevenue ?? insights.kpis.totalRevenue)}
-                        detail={`${formatNumber(insights.kpis.collectionRate)}% collected`}
-                        tone="teal"
-                    />
-                    <KpiCard
-                        label="Outstanding"
-                        value={money(
-                            stats?.outstandingBalance ?? insights.kpis.outstandingBalance
-                        )}
-                        detail={`${money(stats?.paymentsReceived ?? insights.kpis.collectedRevenue)} received`}
-                        tone="red"
-                    />
-                    <KpiCard
-                        label="Stock items"
-                        value={formatNumber(
-                            stats?.inventoryItems ?? insights.inventoryHealth.totalItems
-                        )}
-                        detail={`${formatNumber(lowStockItems)} low stock`}
+                        detail={`${formatNumber(readyRepairs)} ready to collect`}
                         tone="slate"
+                        spark={[6, 8, 7, 10, 12, 11, completedRepairs || 9]}
                     />
                 </section>
 
@@ -342,8 +738,49 @@ function Dashboard() {
                     <article className="dashboard-panel dashboard-panel--wide">
                         <div className="panel-heading">
                             <div>
-                                <p>Recent repairs</p>
-                                <h2>Jobs moving now</h2>
+                                <p>Repair pipeline</p>
+                                <h2>Where work is moving</h2>
+                            </div>
+                            <Link to="/repairs">View all repairs</Link>
+                        </div>
+
+                        <PipelineLanes insights={insights} repairs={repairs} />
+
+                        <div className="pipeline-summary">
+                            <span>
+                                <strong>{formatNumber(activeRepairs)}</strong>
+                                Active repairs
+                            </span>
+                            <span>
+                                <strong>{formatNumber(overdueRepairs)}</strong>
+                                Overdue promises
+                            </span>
+                            <span>
+                                <strong>{formatNumber(urgentRepairs + highPriorityRepairs)}</strong>
+                                High priority
+                            </span>
+                        </div>
+                    </article>
+
+                    <article className="dashboard-panel">
+                        <div className="panel-heading">
+                            <div>
+                                <p>Branch performance</p>
+                                <h2>Accountability view</h2>
+                            </div>
+                            <Link to="/branches">Branches</Link>
+                        </div>
+
+                        <BranchPerformanceTable rows={branchRows} />
+                    </article>
+                </section>
+
+                <section className="dashboard-grid dashboard-grid--main">
+                    <article className="dashboard-panel dashboard-panel--wide">
+                        <div className="panel-heading">
+                            <div>
+                                <p>Recent work</p>
+                                <h2>Jobs requiring visibility</h2>
                             </div>
                             <Link to="/repairs">View all</Link>
                         </div>
@@ -370,22 +807,26 @@ function Dashboard() {
                     <article className="dashboard-panel dashboard-panel--revenue">
                         <div className="panel-heading">
                             <div>
-                                <p>Revenue and collections</p>
-                                <h2>{money(stats?.invoiceRevenue ?? insights.kpis.totalRevenue)}</h2>
+                                <p>Finance snapshot</p>
+                                <h2>{money(revenueTotal)}</h2>
                             </div>
                             <Link to="/invoices">Invoices</Link>
                         </div>
 
-                        <div className="revenue-summary">
-                            <span>
-                                <strong>{money(insights.kpis.collectedRevenue)}</strong>
-                                Collected
-                            </span>
-                            <span>
-                                <strong>{money(insights.kpis.outstandingBalance)}</strong>
-                                Outstanding
-                            </span>
-                        </div>
+                        <dl className="finance-list">
+                            <div>
+                                <dt>Collected</dt>
+                                <dd>{money(collectedRevenue)}</dd>
+                            </div>
+                            <div>
+                                <dt>Outstanding</dt>
+                                <dd>{money(outstandingBalance)}</dd>
+                            </div>
+                            <div>
+                                <dt>Open invoices</dt>
+                                <dd>{formatNumber(unpaidInvoices.length)}</dd>
+                            </div>
+                        </dl>
 
                         <RevenueChart insights={insights} />
                     </article>
@@ -395,7 +836,7 @@ function Dashboard() {
                     <article className="dashboard-panel">
                         <div className="panel-heading">
                             <div>
-                                <p>Repair status</p>
+                                <p>Status mix</p>
                                 <h2>Workload</h2>
                             </div>
                             <Link to="/repairs">Repairs</Link>
@@ -406,7 +847,7 @@ function Dashboard() {
                     <article className="dashboard-panel">
                         <div className="panel-heading">
                             <div>
-                                <p>Priority</p>
+                                <p>Priority mix</p>
                                 <h2>Risk queue</h2>
                             </div>
                             <Link to="/repairs">Review</Link>
@@ -414,45 +855,22 @@ function Dashboard() {
                         <WorkloadBars data={insights.repairPriority} />
                     </article>
 
-                    <article className="dashboard-panel inventory-panel">
+                    <article className="dashboard-panel">
                         <div className="panel-heading">
                             <div>
-                                <p>Inventory health</p>
-                                <h2>{inventoryHealth}%</h2>
+                                <p>Inventory attention</p>
+                                <h2>{formatNumber(lowStockItems.length)} items</h2>
                             </div>
                             <Link to="/inventory">Stock</Link>
                         </div>
 
-                        <div className="inventory-meter">
-                            <i
-                                style={
-                                    {
-                                        "--meter-width": `${inventoryHealth}%`,
-                                    } as MeterStyle
-                                }
-                            />
-                        </div>
-
-                        <dl className="compact-metrics">
-                            <div>
-                                <dt>Units</dt>
-                                <dd>{formatNumber(insights.inventoryHealth.stockUnits)}</dd>
-                            </div>
-                            <div>
-                                <dt>Low stock</dt>
-                                <dd>{formatNumber(lowStockItems)}</dd>
-                            </div>
-                            <div>
-                                <dt>Value</dt>
-                                <dd>{money(insights.inventoryHealth.inventoryValue)}</dd>
-                            </div>
-                        </dl>
+                        <InventoryAttention items={lowStockItems} />
                     </article>
 
                     <article className="dashboard-panel communications-panel">
                         <div className="panel-heading">
                             <div>
-                                <p>Customer communications</p>
+                                <p>Customer trust</p>
                                 <h2>{formatNumber(communicationTotal)}</h2>
                             </div>
                             <Link to="/communications">Messages</Link>
@@ -473,6 +891,53 @@ function Dashboard() {
                             </div>
                         </dl>
                     </article>
+                </section>
+
+                <section className="dashboard-panel next-actions-panel">
+                    <div className="panel-heading">
+                        <div>
+                            <p>Next best actions</p>
+                            <h2>What should the shop do next?</h2>
+                        </div>
+                    </div>
+
+                    <div className="next-actions-grid">
+                        <ActionCard
+                            tone="red"
+                            title={`Follow up ${formatNumber(unpaidInvoices.length)} unpaid invoices`}
+                            detail={`Potential cash to recover: ${money(
+                                unpaidBalance || outstandingBalance
+                            )}`}
+                            to="/invoices"
+                        />
+                        <ActionCard
+                            tone="amber"
+                            title={`Restock ${formatNumber(
+                                lowStockItems.length ||
+                                    insights.inventoryHealth.lowStockItems
+                            )} critical items`}
+                            detail={`${formatNumber(awaitingParts)} repairs may depend on parts`}
+                            to="/inventory"
+                        />
+                        <ActionCard
+                            tone="blue"
+                            title={`Update ${formatNumber(communicationTotal)} customer touchpoints`}
+                            detail="Keep repair status transparent and reduce walk-in calls"
+                            to="/communications"
+                        />
+                        <ActionCard
+                            tone="green"
+                            title={`Collect ${formatNumber(readyRepairs)} completed jobs`}
+                            detail="Convert ready repairs into cash and customer pickup"
+                            to="/repairs"
+                        />
+                        <ActionCard
+                            tone="slate"
+                            title="Review branch accountability"
+                            detail={`${formatNumber(branchRows.length)} branches in current view`}
+                            to="/branches"
+                        />
+                    </div>
                 </section>
             </section>
         </DashboardLayout>
