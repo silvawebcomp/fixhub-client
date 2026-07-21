@@ -3,6 +3,7 @@ import "./DashboardLayout.css";
 import type { ReactNode } from "react";
 
 import Sidebar from "../components/dashboard/Sidebar";
+import FeedbackWidget from "../components/feedback/FeedbackWidget";
 import Topbar from "../components/dashboard/Topbar";
 
 type DashboardLayoutProps = {
@@ -32,6 +33,8 @@ function DashboardLayout({
                     {children}
 
                 </main>
+
+                <FeedbackWidget />
 
             </div>
 

@@ -687,6 +687,35 @@ function Dashboard() {
 
                 {isLoading && <p className="dashboard-notice">Loading live dashboard...</p>}
 
+                <section className="dashboard-panel beta-launch-panel">
+                    <div className="panel-heading">
+                        <div>
+                            <p>V1 beta launch kit</p>
+                            <h2>Use feedback to prove what FixHub should become next.</h2>
+                        </div>
+                        <Link to="/feedback">Review feedback</Link>
+                    </div>
+
+                    <div className="beta-launch-grid">
+                        <article>
+                            <strong>1. Onboard shops manually</strong>
+                            <span>Start with 10 to 20 repair businesses and watch their first session.</span>
+                        </article>
+                        <article>
+                            <strong>2. Track activation</strong>
+                            <span>Look for first repair, first invoice, first customer update, and return usage.</span>
+                        </article>
+                        <article>
+                            <strong>3. Capture friction fast</strong>
+                            <span>Ask users to click Send feedback when something feels confusing or slow.</span>
+                        </article>
+                        <article>
+                            <strong>4. Fix repeated blockers</strong>
+                            <span>Prioritize issues that stop shops from completing real daily work.</span>
+                        </article>
+                    </div>
+                </section>
+
                 <section className="dashboard-kpi-grid" aria-label="Key metrics">
                     <KpiCard
                         label="Active repairs"

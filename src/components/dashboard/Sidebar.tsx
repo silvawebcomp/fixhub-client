@@ -1,7 +1,19 @@
 import "./Sidebar.css";
 import { NavLink } from "react-router-dom";
+import { useAuth } from "../../hooks/useAuth";
+
+const FEEDBACK_ROLES = new Set([
+    "Owner",
+    "Admin",
+    "Manager",
+]);
 
 function Sidebar() {
+    const { user } = useAuth();
+    const canReviewFeedback = user?.role
+        ? FEEDBACK_ROLES.has(user.role)
+        : true;
+
     return (
         <aside className="sidebar">
 
@@ -46,6 +58,12 @@ function Sidebar() {
                 <NavLink to="/team">
                     Team
                 </NavLink>
+
+                {canReviewFeedback && (
+                    <NavLink to="/feedback">
+                        Feedback
+                    </NavLink>
+                )}
 
             </nav>
 

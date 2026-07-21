@@ -38,6 +38,7 @@ import Communications from "../pages/communications/Communications";
 import Analytics from "../pages/analytics/Analytics";
 import Team from "../pages/team/Team";
 import Branches from "../pages/branches/Branches";
+import FeedbackPage from "../pages/feedback/Feedback";
 
 import ProtectedRoute from "../components/auth/ProtectedRoute";
 
@@ -208,6 +209,15 @@ function AppRouter() {
                     element={
                         <ProtectedRoute>
                             <Team />
+                        </ProtectedRoute>
+                    }
+                />
+
+                <Route
+                    path="/feedback"
+                    element={
+                        <ProtectedRoute>
+                            <FeedbackPage />
                         </ProtectedRoute>
                     }
                 />

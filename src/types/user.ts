@@ -6,7 +6,7 @@ export interface User {
 
     email: string;
 
-    role?: "Owner" | "Admin" | "Technician" | "Front Desk";
+    role?: "Owner" | "Admin" | "Manager" | "Technician" | "Front Desk" | "Receptionist";
 
     token?: string;
 
