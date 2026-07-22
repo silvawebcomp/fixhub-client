@@ -64,6 +64,23 @@
     line-height: 1.4;
 }
 
+.auth-help-row {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: -10px;
+}
+
+.auth-help-row a {
+    color: #2563eb;
+    font-size: 14px;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.auth-help-row a:hover {
+    text-decoration: underline;
+}
+
 .login-form input {
 
     width: 100%;

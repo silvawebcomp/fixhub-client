@@ -38,3 +38,49 @@ export async function registerUser(
         body: JSON.stringify(payload),
     });
 }
+
+type RequestPasswordResetPayload = {
+    email: string;
+};
+
+type RequestPasswordResetResponse = {
+    message: string;
+    maskedEmail: string;
+    expiresInMinutes: number;
+};
+
+export async function requestPasswordReset(
+    payload: RequestPasswordResetPayload
+) {
+    return apiRequest<RequestPasswordResetResponse>(
+        "/auth/forgot-password",
+        {
+            method: "POST",
+            auth: false,
+            body: JSON.stringify(payload),
+        }
+    );
+}
+
+type ResetPasswordPayload = {
+    email: string;
+    code: string;
+    password: string;
+};
+
+type ResetPasswordResponse = {
+    message: string;
+};
+
+export async function resetPassword(
+    payload: ResetPasswordPayload
+) {
+    return apiRequest<ResetPasswordResponse>(
+        "/auth/reset-password",
+        {
+            method: "POST",
+            auth: false,
+            body: JSON.stringify(payload),
+        }
+    );
+}

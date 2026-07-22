@@ -15,6 +15,8 @@ import FAQ from "../components/ui/FAQ";
 
 import Login from "../pages/auth/Login";
 import Register from "../pages/auth/Register";
+import ForgotPassword from "../pages/auth/ForgotPassword";
+import ResetPassword from "../pages/auth/ResetPassword";
 
 import TrackRepair from "../pages/tracking/TrackRepair";
 
@@ -73,6 +75,16 @@ function AppRouter() {
                 <Route
                     path="/register"
                     element={<Register />}
+                />
+
+                <Route
+                    path="/forgot-password"
+                    element={<ForgotPassword />}
+                />
+
+                <Route
+                    path="/reset-password"
+                    element={<ResetPassword />}
                 />
 
                 <Route

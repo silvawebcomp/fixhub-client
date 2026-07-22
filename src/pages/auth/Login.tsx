@@ -1,7 +1,10 @@
 import "./Login.css";
 
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import {
+    Link,
+    useNavigate,
+} from "react-router-dom";
 
 import { loginUser } from "../../services/authService";
 import { useAuth } from "../../hooks/useAuth";
@@ -126,6 +129,12 @@ navigate("/dashboard");
                     required
 
                 />
+
+                <div className="auth-help-row">
+                    <Link to="/forgot-password">
+                        Forgot password?
+                    </Link>
+                </div>
 
                 <button
 
